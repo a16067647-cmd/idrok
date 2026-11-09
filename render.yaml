@@ -1,0 +1,57 @@
+# Render Blueprint: ikki xizmat / два сервиса.
+#   kodla-api    — akkauntlar, reyting, ustoz paneli (ma’lumotlar diskda saqlanadi)
+#                  аккаунты, рейтинг, панель учителя (данные хранятся на диске)
+#   kodla-runner — o‘quvchilarning Python kodini bajaradi; parol va bazasi YO‘Q
+#                  выполняет Python-код учеников; паролей и базы НЕТ
+#
+# Render → New → Blueprint → shu repozitoriyni tanlang / выберите этот репозиторий.
+# So‘ng TEACHER_PASSWORD ni kiriting (kamida 12 belgi) / затем введите TEACHER_PASSWORD (минимум 12 символов).
+
+services:
+  - type: web
+    name: kodla-api
+    runtime: python
+    rootDir: server
+    # BEPUL reja + Supabase: ma’lumotlar Supabase Storage'da saqlanadi (server/cloud.py).
+    #   Render → kodla-api → Environment ga qo‘shing: SUPABASE_URL va SUPABASE_KEY (service_role).
+    # Бесплатный план + Supabase: данные хранятся в Supabase Storage (server/cloud.py).
+    #   Добавьте в Render → kodla-api → Environment: SUPABASE_URL и SUPABASE_KEY (service_role).
+    # Supabase'siz: server qayta ishga tushsa akkauntlar va natijalar O‘CHADI.
+    # Doimiy saqlash uchun: plan: starter + pastdagi disk qismini qaytaring (~7$/oy).
+    # БЕСПЛАТНЫЙ план: при перезапуске аккаунты и результаты СТИРАЮТСЯ (только для теста).
+    # Для постоянного хранения: plan: starter + верните блок disk ниже (~7$/мес).
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python server.py
+    healthCheckPath: /api/ping
+    envVars:
+      - key: TEACHER_PASSWORD
+        sync: false
+      # Bepul AI (Google AI Studio → Get API key) / бесплатный AI
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: KODLA_DB_PATH
+        value: /tmp/kodla/kodla.db
+      - key: KODLA_DISABLE_RUN
+        value: "1"
+      - key: TZ
+        value: Asia/Tashkent
+      - key: PYTHON_VERSION
+        value: 3.12.7
+    # disk:
+    #   name: kodla-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
+    # (disk bilan KODLA_DB_PATH = /var/data/kodla.db / с диском KODLA_DB_PATH = /var/data/kodla.db)
+
+  - type: web
+    name: kodla-runner
+    runtime: python
+    rootDir: server
+    plan: free               # 15 daqiqa ishlatilmasa uxlaydi / засыпает через 15 минут простоя
+    buildCommand: pip install -r requirements.txt
+    startCommand: python runner.py
+    healthCheckPath: /api/ping
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
