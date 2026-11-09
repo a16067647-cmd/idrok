@@ -13,7 +13,7 @@ const Map<String, Map<String, List<List<Object>>>> kLegalText = {
    [
     "Kim biz",
     [
-     "Idrok Academy — maktab o‘quvchilari uchun dasturlash darslari ilovasi (mobil ilova va veb-sayt). Ushbu siyosat qanday ma’lumot yig‘ilishi, nima uchun ishlatilishi va uni qanday o‘chirish mumkinligini tushuntiradi. Savollar uchun: Telegram: @behruz_sk (https://t.me/behruz_sk)."
+     "Idrok Academy — maktab o‘quvchilari uchun dasturlash darslari ilovasi (mobil ilova va veb-sayt). Ushbu siyosat qanday ma’lumot yig‘ilishi, nima uchun ishlatilishi va uni qanday o‘chirish mumkinligini tushuntiradi. Savollar uchun: Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com."
     ]
    ],
    [
@@ -57,7 +57,7 @@ const Map<String, Map<String, List<List<Object>>>> kLegalText = {
    [
     "Sizning huquqlaringiz",
     [
-     "Ma’lumotlaringizni ko‘rish, tuzatish (profilda) va to‘liq o‘chirish (Profil → «Hisobni o‘chirish»). Boshqa so‘rovlar uchun: Telegram: @behruz_sk (https://t.me/behruz_sk)."
+     "Ma’lumotlaringizni ko‘rish, tuzatish (profilda) va to‘liq o‘chirish (Profil → «Hisobni o‘chirish»). Boshqa so‘rovlar uchun: Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com."
     ]
    ],
    [
@@ -77,7 +77,7 @@ const Map<String, Map<String, List<List<Object>>>> kLegalText = {
    [
     "Кто мы",
     [
-     "Idrok Academy — приложение с уроками программирования для школьников (мобильное приложение и сайт). Эта политика объясняет, какие данные собираются, зачем они нужны и как их удалить. Вопросы: Telegram: @behruz_sk (https://t.me/behruz_sk)."
+     "Idrok Academy — приложение с уроками программирования для школьников (мобильное приложение и сайт). Эта политика объясняет, какие данные собираются, зачем они нужны и как их удалить. Вопросы: Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com."
     ]
    ],
    [
@@ -121,7 +121,7 @@ const Map<String, Map<String, List<List<Object>>>> kLegalText = {
    [
     "Ваши права",
     [
-     "Просматривать данные, исправлять их (в профиле) и полностью удалить (Профиль → «Удалить аккаунт»). Другие запросы: Telegram: @behruz_sk (https://t.me/behruz_sk)."
+     "Просматривать данные, исправлять их (в профиле) и полностью удалить (Профиль → «Удалить аккаунт»). Другие запросы: Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com."
     ]
    ],
    [
@@ -185,7 +185,7 @@ const Map<String, Map<String, List<List<Object>>>> kLegalText = {
    [
     "Aloqa",
     [
-     "Telegram: @behruz_sk (https://t.me/behruz_sk). Shartlar o‘zgarsa, yangi sanani shu sahifada e’lon qilamiz."
+     "Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com. Shartlar o‘zgarsa, yangi sanani shu sahifada e’lon qilamiz."
     ]
    ]
   ],
@@ -235,7 +235,7 @@ const Map<String, Map<String, List<List<Object>>>> kLegalText = {
    [
     "Контакты",
     [
-     "Telegram: @behruz_sk (https://t.me/behruz_sk). Если условия изменятся, мы опубликуем новую дату на этой странице."
+     "Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com. Если условия изменятся, мы опубликуем новую дату на этой странице."
     ]
    ]
   ]
@@ -253,7 +253,7 @@ const Map<String, Map<String, List<List<Object>>>> kLegalText = {
    [
     "Ilovaga kira olmasangiz",
     [
-     "Telegram: @behruz_sk (https://t.me/behruz_sk) ga loginingizni yozib yuboring. Hisobni egasi ekaningizni tekshirib, 30 kun ichida o‘chiramiz."
+     "Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com ga loginingizni yozib yuboring. Hisobni egasi ekaningizni tekshirib, 30 kun ichida o‘chiramiz."
     ]
    ],
    [
@@ -275,7 +275,7 @@ const Map<String, Map<String, List<List<Object>>>> kLegalText = {
    [
     "Если не можете войти",
     [
-     "Напишите свой логин: Telegram: @behruz_sk (https://t.me/behruz_sk). Мы проверим, что аккаунт ваш, и удалим его в течение 30 дней."
+     "Напишите свой логин: Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com. Мы проверим, что аккаунт ваш, и удалим его в течение 30 дней."
     ]
    ],
    [

@@ -7,7 +7,7 @@ import html
 
 VERSION = "2026-11-09"
 UPDATED = {"uz": "9-noyabr, 2026", "ru": "9 ноября 2026"}
-CONTACT = "Telegram: @behruz_sk (https://t.me/behruz_sk)"
+CONTACT = "Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com"
 APP = "Idrok Academy"
 
 PAGES = ("/privacy", "/terms", "/delete-account")
