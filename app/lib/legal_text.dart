@@ -8,6 +8,8 @@ const Map<String, String> kLegalUpdated = {"uz": "9-noyabr, 2026", "ru": "9 но
 const Map<String, Map<String, String>> kLegalTitles = {"about": {"uz": "Biz haqimizda", "ru": "О нас"}, "privacy": {"uz": "Maxfiylik siyosati", "ru": "Политика конфиденциальности"}, "terms": {"uz": "Foydalanish shartlari", "ru": "Условия использования"}, "delete-account": {"uz": "Hisobni o‘chirish", "ru": "Удаление аккаунта"}};
 const List<List<String>> kLegalTeam = [["bexruz", "Mamajonov Bexruz", "Asoschi", "Основатель"], ["vazzohbek", "Satvaldiyev Vazzohbek", "Hammuassis", "Сооснователь"], ["abdurahmon", "Rahimjonov Abdurahmon", "Hammuassis", "Сооснователь"]];
 const int kLegalTeamAfter = 2;
+const String kLegalPartnerLogo = "kelajak";
+const int kLegalPartnerAfter = 3;
 
 const Map<String, Map<String, List<List<Object>>>> kLegalText = {
  "about": {
@@ -27,6 +29,12 @@ const Map<String, Map<String, List<List<Object>>>> kLegalText = {
    [
     "Jamoa",
     []
+   ],
+   [
+    "Qo‘llab-quvvatlovchi",
+    [
+     "Idrok Academy loyihasi Kelajak Markazlari tomonidan qo‘llab-quvvatlangan va moliyalashtirilgan. Ularning yordami uchun chin dildan minnatdormiz!"
+    ]
    ],
    [
     "Ustozlar uchun",
@@ -57,6 +65,12 @@ const Map<String, Map<String, List<List<Object>>>> kLegalText = {
    [
     "Команда",
     []
+   ],
+   [
+    "При поддержке",
+    [
+     "Проект Idrok Academy поддержан и профинансирован Kelajak Markazlari. Искренне благодарим их за помощь!"
+    ]
    ],
    [
     "Для учителей",

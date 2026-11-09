@@ -630,7 +630,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(200, {"ok": True, "app": "idrok"})
         if path == "/api/shop":
             return self.send_json(200, {"items": list(SHOP.values())})
-        if path.startswith("/team/") and path[6:].removesuffix(".jpg") in {t[0] for t in legal.TEAM}:
+        if path.startswith("/team/") and path[6:].removesuffix(".jpg") in {t[0] for t in legal.TEAM} | {legal.PARTNER_LOGO}:
             img = (HERE / "content" / "team" / path[6:]).read_bytes()
             self.send_response(200)
             self.send_header("Content-Type", "image/jpeg")

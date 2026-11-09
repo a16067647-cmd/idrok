@@ -59,6 +59,15 @@ class LegalScreen extends StatelessWidget {
                             child: Text('$p', style: AppType.callout.copyWith(color: c.text2, height: 1.45)),
                           ),
                         if (page == 'about' && i == kLegalTeamAfter) _Team(lang: lang),
+                        if (page == 'about' && i == kLegalPartnerAfter)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: S.x2),
+                            child: ClipRRect(
+                              borderRadius: R.all(R.lg),
+                              child: Image.asset('assets/team/$kLegalPartnerLogo.jpg',
+                                  width: 160, height: 160, fit: BoxFit.cover, semanticLabel: 'Kelajak Markazlari'),
+                            ),
+                          ),
                       ],
                     ]),
                   ),

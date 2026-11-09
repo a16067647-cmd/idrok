@@ -19,6 +19,8 @@ TEAM = [
     ("abdurahmon", "Rahimjonov Abdurahmon", "Hammuassis", "Сооснователь"),
 ]
 TEAM_AFTER = 2  # jamoa shu bo‘limdan keyin / команда после этого раздела
+PARTNER_LOGO = "kelajak"  # qo‘llab-quvvatlovchi logotipi / логотип партнёра
+PARTNER_AFTER = 3
 
 TITLES = {
     "/about": {"uz": "Biz haqimizda", "ru": "О нас"},
@@ -41,6 +43,10 @@ TEXT = {
                 "va tushunarli tarzda o‘rgana olishi.",
             ]),
             ("Jamoa", []),
+            ("Qo‘llab-quvvatlovchi", [
+                "Idrok Academy loyihasi Kelajak Markazlari tomonidan qo‘llab-quvvatlangan va moliyalashtirilgan. "
+                "Ularning yordami uchun chin dildan minnatdormiz!",
+            ]),
             ("Ustozlar uchun", [
                 "Sinf natijalarini kuzatish, o‘z darslari va testlarini yaratish, sun’iy intellekt yordamida kitobdan dars tayyorlash.",
             ]),
@@ -56,6 +62,10 @@ TEXT = {
                 "Чтобы каждый школьник — в какой бы области или районе он ни жил — мог интересно и понятно научиться писать код.",
             ]),
             ("Команда", []),
+            ("При поддержке", [
+                "Проект Idrok Academy поддержан и профинансирован Kelajak Markazlari. "
+                "Искренне благодарим их за помощь!",
+            ]),
             ("Для учителей", [
                 "Следить за результатами класса, создавать свои уроки и тесты, готовить уроки из книг с помощью искусственного интеллекта.",
             ]),
@@ -281,6 +291,8 @@ def page(path, lang="", static=False):
                 f'<div class="m"><img src="{"" if static else "/"}team/{f}.jpg" alt="{html.escape(n)}">'
                 f'<b>{html.escape(n)}</b><span>{html.escape(r_uz if lang == "uz" else r_ru)}</span></div>'
                 for f, n, r_uz, r_ru in TEAM) + "</div>")
+        if path == "/about" and i == PARTNER_AFTER:
+            body.append(f'<img class="partner" src="{"" if static else "/"}team/{PARTNER_LOGO}.jpg" alt="Kelajak Markazlari">')
     return f"""<!DOCTYPE html>
 <html lang="{lang}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -293,6 +305,7 @@ h1{{margin:0 0 4px;font-size:28px}} h2{{font-size:18px;margin:24px 0 6px}}
 p{{margin:6px 0}} .muted{{color:#8e8e93;font-size:14px}}
 .team{{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin:12px 0}}
 .m{{text-align:center}} .m img{{width:100%;aspect-ratio:1;object-fit:cover;border-radius:18px;display:block;margin-bottom:8px}}
+.partner{{width:180px;border-radius:18px;display:block;margin:12px 0}}
 .m b{{display:block}} .m span{{color:#8e8e93;font-size:14px}}
 a{{color:#5b5bf0;text-decoration:none}} .top{{display:flex;justify-content:space-between;margin-bottom:16px}}
 </style></head><body><main>
@@ -310,7 +323,7 @@ if __name__ == "__main__":
     out.mkdir(parents=True, exist_ok=True)
     import shutil
     (out / "team").mkdir(exist_ok=True)
-    for f, *_ in TEAM:
+    for f in [t[0] for t in TEAM] + [PARTNER_LOGO]:
         shutil.copy(Path(__file__).parent / "content" / "team" / f"{f}.jpg", out / "team" / f"{f}.jpg")
     for p in PAGES:
         for lg in ("uz", "ru"):
