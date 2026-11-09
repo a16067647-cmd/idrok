@@ -190,6 +190,12 @@ class _ProfileTabState extends State<ProfileTab> {
 
     final legal = GroupList([
       GroupRow(
+          key: const ValueKey('row-about'),
+          icon: Icons.info_rounded,
+          color: const Color(0xFF34C759),
+          title: s.t('about'),
+          onTap: () => openLegal(context, 'about')),
+      GroupRow(
           key: const ValueKey('row-privacy'),
           icon: Icons.privacy_tip_rounded,
           color: const Color(0xFF0A6CFF),

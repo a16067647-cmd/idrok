@@ -42,6 +42,7 @@ flutter:
     - assets/video/intro.mp4
     - assets/shop/
     - assets/content/
+    - assets/team/
   fonts:
     - family: Manrope
       fonts:

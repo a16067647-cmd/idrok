@@ -333,7 +333,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ContactAdminCard(text: s.t('forgot_pw')),
                     const SizedBox(height: S.x4),
                     Wrap(alignment: WrapAlignment.center, spacing: S.x4, children: [
-                      for (final l in [('privacy', 'privacy'), ('terms', 'terms')])
+                      for (final l in [('about', 'about'), ('privacy', 'privacy'), ('terms', 'terms')])
                         GestureDetector(
                           onTap: () => openLegal(context, l.$2),
                           child: Text(s.t(l.$1), style: AppType.footnote.copyWith(color: c.text3)),

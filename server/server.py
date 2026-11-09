@@ -630,12 +630,21 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(200, {"ok": True, "app": "idrok"})
         if path == "/api/shop":
             return self.send_json(200, {"items": list(SHOP.values())})
+        if path.startswith("/team/") and path[6:].removesuffix(".jpg") in {t[0] for t in legal.TEAM}:
+            img = (HERE / "content" / "team" / path[6:]).read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "image/jpeg")
+            self.send_header("Content-Length", str(len(img)))
+            self.send_header("Cache-Control", "public, max-age=86400")
+            self.end_headers()
+            self.wfile.write(img)
+            return None
         if path in legal.PAGES:
             page = legal.page(path, params.get("lang", "")).encode()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(page)))
-            self.send_header("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'")
+            self.send_header("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'")
             self.end_headers()
             self.wfile.write(page)
             return None

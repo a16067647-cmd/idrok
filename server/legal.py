@@ -10,9 +10,18 @@ UPDATED = {"uz": "9-noyabr, 2026", "ru": "9 ноября 2026"}
 CONTACT = "Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com"
 APP = "Idrok Academy"
 
-PAGES = ("/privacy", "/terms", "/delete-account")
+PAGES = ("/about", "/privacy", "/terms", "/delete-account")
+
+# Jamoa: (fayl, ism, lavozim uz, lavozim ru) / команда: (файл, имя, роль uz, роль ru)
+TEAM = [
+    ("bexruz", "Mamajonov Bexruz", "Asoschi", "Основатель"),
+    ("vazzohbek", "Satvaldiyev Vazzohbek", "Hammuassis", "Сооснователь"),
+    ("abdurahmon", "Rahimjonov Abdurahmon", "Hammuassis", "Сооснователь"),
+]
+TEAM_AFTER = 2  # jamoa shu bo‘limdan keyin / команда после этого раздела
 
 TITLES = {
+    "/about": {"uz": "Biz haqimizda", "ru": "О нас"},
     "/privacy": {"uz": "Maxfiylik siyosati", "ru": "Политика конфиденциальности"},
     "/terms": {"uz": "Foydalanish shartlari", "ru": "Условия использования"},
     "/delete-account": {"uz": "Hisobni o‘chirish", "ru": "Удаление аккаунта"},
@@ -20,6 +29,39 @@ TITLES = {
 
 # Har bir bo‘lim: (sarlavha, [xatboshilar]) / каждый раздел: (заголовок, [абзацы])
 TEXT = {
+    "/about": {
+        "uz": [
+            ("Idrok Academy nima", [
+                "Idrok Academy — O‘zbekiston maktab o‘quvchilari uchun dasturlashni o‘yin orqali o‘rgatadigan ilova. "
+                "HTML, CSS, JavaScript, Python va sun’iy intellekt darslari o‘zbek va rus tillarida: qisqa darslar, "
+                "animatsiyalar, XP, ligalar, yakuniy imtihon va sertifikat.",
+            ]),
+            ("Maqsadimiz", [
+                "Har bir maktab o‘quvchisi — qaysi viloyat yoki tumanda yashashidan qat’i nazar — kod yozishni qiziqarli "
+                "va tushunarli tarzda o‘rgana olishi.",
+            ]),
+            ("Jamoa", []),
+            ("Ustozlar uchun", [
+                "Sinf natijalarini kuzatish, o‘z darslari va testlarini yaratish, sun’iy intellekt yordamida kitobdan dars tayyorlash.",
+            ]),
+            ("Aloqa", [CONTACT]),
+        ],
+        "ru": [
+            ("Что такое Idrok Academy", [
+                "Idrok Academy — приложение, которое учит школьников Узбекистана программированию в игровой форме. "
+                "Уроки HTML, CSS, JavaScript, Python и искусственного интеллекта на узбекском и русском языках: короткие уроки, "
+                "анимации, XP, лиги, итоговый экзамен и сертификат.",
+            ]),
+            ("Наша цель", [
+                "Чтобы каждый школьник — в какой бы области или районе он ни жил — мог интересно и понятно научиться писать код.",
+            ]),
+            ("Команда", []),
+            ("Для учителей", [
+                "Следить за результатами класса, создавать свои уроки и тесты, готовить уроки из книг с помощью искусственного интеллекта.",
+            ]),
+            ("Контакты", [CONTACT]),
+        ],
+    },
     "/privacy": {
         "uz": [
             ("Kim biz", [
@@ -231,9 +273,14 @@ def page(path, lang="", static=False):
     links = " · ".join(
         f'<a href="{_href(p, lang, static)}">{html.escape(TITLES[p][lang])}</a>' for p in PAGES if p != path)
     body = []
-    for head, paras in TEXT[path][lang]:
+    for i, (head, paras) in enumerate(TEXT[path][lang]):
         body.append(f"<h2>{html.escape(head)}</h2>")
         body.extend(f"<p>{html.escape(p)}</p>" for p in paras)
+        if path == "/about" and i == TEAM_AFTER:
+            body.append('<div class="team">' + "".join(
+                f'<div class="m"><img src="{"" if static else "/"}team/{f}.jpg" alt="{html.escape(n)}">'
+                f'<b>{html.escape(n)}</b><span>{html.escape(r_uz if lang == "uz" else r_ru)}</span></div>'
+                for f, n, r_uz, r_ru in TEAM) + "</div>")
     return f"""<!DOCTYPE html>
 <html lang="{lang}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -244,6 +291,9 @@ main{{max-width:720px;margin:0 auto;padding:32px 20px 60px}}
 .card{{background:#fff;border-radius:20px;padding:28px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06)}}
 h1{{margin:0 0 4px;font-size:28px}} h2{{font-size:18px;margin:24px 0 6px}}
 p{{margin:6px 0}} .muted{{color:#8e8e93;font-size:14px}}
+.team{{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin:12px 0}}
+.m{{text-align:center}} .m img{{width:100%;aspect-ratio:1;object-fit:cover;border-radius:18px;display:block;margin-bottom:8px}}
+.m b{{display:block}} .m span{{color:#8e8e93;font-size:14px}}
 a{{color:#5b5bf0;text-decoration:none}} .top{{display:flex;justify-content:space-between;margin-bottom:16px}}
 </style></head><body><main>
 <div class="top"><b>{APP}</b><a href="{_href(path, other, static)}">{"Русский" if lang == "uz" else "O‘zbekcha"}</a></div>
@@ -258,6 +308,10 @@ if __name__ == "__main__":
     from pathlib import Path
     out = Path(sys.argv[1])
     out.mkdir(parents=True, exist_ok=True)
+    import shutil
+    (out / "team").mkdir(exist_ok=True)
+    for f, *_ in TEAM:
+        shutil.copy(Path(__file__).parent / "content" / "team" / f"{f}.jpg", out / "team" / f"{f}.jpg")
     for p in PAGES:
         for lg in ("uz", "ru"):
             (out / _href(p, lg, True)).write_text(page(p, lg, static=True), encoding="utf-8")

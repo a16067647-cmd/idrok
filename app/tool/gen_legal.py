@@ -15,6 +15,8 @@ out.append("")
 out.append("/// sahifa -> til -> [sarlavha, [xatboshilar]] / страница -> язык -> [заголовок, [абзацы]]")
 out.append("const Map<String, Map<String, String>> kLegalTitles = " + json.dumps(
     {k.strip('/'): v for k, v in legal.TITLES.items()}, ensure_ascii=False) + ";")
+out.append("const List<List<String>> kLegalTeam = " + json.dumps([list(t) for t in legal.TEAM], ensure_ascii=False) + ";")
+out.append(f"const int kLegalTeamAfter = {legal.TEAM_AFTER};")
 out.append("")
 out.append("const Map<String, Map<String, List<List<Object>>>> kLegalText = " + json.dumps(
     {k.strip('/'): {l: [[h, ps] for h, ps in secs] for l, secs in v.items()} for k, v in legal.TEXT.items()},

@@ -5,9 +5,73 @@ const String kLegalVersion = "2026-11-09";
 const Map<String, String> kLegalUpdated = {"uz": "9-noyabr, 2026", "ru": "9 ноября 2026"};
 
 /// sahifa -> til -> [sarlavha, [xatboshilar]] / страница -> язык -> [заголовок, [абзацы]]
-const Map<String, Map<String, String>> kLegalTitles = {"privacy": {"uz": "Maxfiylik siyosati", "ru": "Политика конфиденциальности"}, "terms": {"uz": "Foydalanish shartlari", "ru": "Условия использования"}, "delete-account": {"uz": "Hisobni o‘chirish", "ru": "Удаление аккаунта"}};
+const Map<String, Map<String, String>> kLegalTitles = {"about": {"uz": "Biz haqimizda", "ru": "О нас"}, "privacy": {"uz": "Maxfiylik siyosati", "ru": "Политика конфиденциальности"}, "terms": {"uz": "Foydalanish shartlari", "ru": "Условия использования"}, "delete-account": {"uz": "Hisobni o‘chirish", "ru": "Удаление аккаунта"}};
+const List<List<String>> kLegalTeam = [["bexruz", "Mamajonov Bexruz", "Asoschi", "Основатель"], ["vazzohbek", "Satvaldiyev Vazzohbek", "Hammuassis", "Сооснователь"], ["abdurahmon", "Rahimjonov Abdurahmon", "Hammuassis", "Сооснователь"]];
+const int kLegalTeamAfter = 2;
 
 const Map<String, Map<String, List<List<Object>>>> kLegalText = {
+ "about": {
+  "uz": [
+   [
+    "Idrok Academy nima",
+    [
+     "Idrok Academy — O‘zbekiston maktab o‘quvchilari uchun dasturlashni o‘yin orqali o‘rgatadigan ilova. HTML, CSS, JavaScript, Python va sun’iy intellekt darslari o‘zbek va rus tillarida: qisqa darslar, animatsiyalar, XP, ligalar, yakuniy imtihon va sertifikat."
+    ]
+   ],
+   [
+    "Maqsadimiz",
+    [
+     "Har bir maktab o‘quvchisi — qaysi viloyat yoki tumanda yashashidan qat’i nazar — kod yozishni qiziqarli va tushunarli tarzda o‘rgana olishi."
+    ]
+   ],
+   [
+    "Jamoa",
+    []
+   ],
+   [
+    "Ustozlar uchun",
+    [
+     "Sinf natijalarini kuzatish, o‘z darslari va testlarini yaratish, sun’iy intellekt yordamida kitobdan dars tayyorlash."
+    ]
+   ],
+   [
+    "Aloqa",
+    [
+     "Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com"
+    ]
+   ]
+  ],
+  "ru": [
+   [
+    "Что такое Idrok Academy",
+    [
+     "Idrok Academy — приложение, которое учит школьников Узбекистана программированию в игровой форме. Уроки HTML, CSS, JavaScript, Python и искусственного интеллекта на узбекском и русском языках: короткие уроки, анимации, XP, лиги, итоговый экзамен и сертификат."
+    ]
+   ],
+   [
+    "Наша цель",
+    [
+     "Чтобы каждый школьник — в какой бы области или районе он ни жил — мог интересно и понятно научиться писать код."
+    ]
+   ],
+   [
+    "Команда",
+    []
+   ],
+   [
+    "Для учителей",
+    [
+     "Следить за результатами класса, создавать свои уроки и тесты, готовить уроки из книг с помощью искусственного интеллекта."
+    ]
+   ],
+   [
+    "Контакты",
+    [
+     "Telegram: @behruz_sk (https://t.me/behruz_sk), email: behryzmamajon@gmail.com"
+    ]
+   ]
+  ]
+ },
  "privacy": {
   "uz": [
    [

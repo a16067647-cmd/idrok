@@ -48,16 +48,17 @@ class LegalScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(S.x5),
                     decoration: BoxDecoration(color: c.surface, borderRadius: R.all(R.lg)),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      for (final sec in sections) ...[
+                      for (var i = 0; i < sections.length; i++) ...[
                         Padding(
                           padding: const EdgeInsets.only(top: S.x3, bottom: S.x1),
-                          child: Text('${sec[0]}', style: AppType.headline.copyWith(color: c.text)),
+                          child: Text('${sections[i][0]}', style: AppType.headline.copyWith(color: c.text)),
                         ),
-                        for (final p in (sec[1] as List))
+                        for (final p in (sections[i][1] as List))
                           Padding(
                             padding: const EdgeInsets.only(bottom: S.x2),
                             child: Text('$p', style: AppType.callout.copyWith(color: c.text2, height: 1.45)),
                           ),
+                        if (page == 'about' && i == kLegalTeamAfter) _Team(lang: lang),
                       ],
                     ]),
                   ),
@@ -79,6 +80,42 @@ class LegalScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Jamoa a’zolari / участники команды.
+class _Team extends StatelessWidget {
+  final String lang;
+  const _Team({required this.lang});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = AppScope.of(context).c;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: S.x2),
+      child: LayoutBuilder(builder: (context, box) {
+        final w = box.maxWidth >= 480 ? (box.maxWidth - S.x4 * 2) / 3 : (box.maxWidth - S.x4) / 2;
+        return Wrap(spacing: S.x4, runSpacing: S.x4, children: [
+          for (final m in kLegalTeam)
+            SizedBox(
+              width: w,
+              child: Column(children: [
+                ClipRRect(
+                  borderRadius: R.all(R.lg),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Image.asset('assets/team/${m[0]}.jpg', fit: BoxFit.cover),
+                  ),
+                ),
+                const SizedBox(height: S.x2),
+                Text(m[1], textAlign: TextAlign.center, style: AppType.subhead.copyWith(color: c.text, fontWeight: FontWeight.w700)),
+                Text(lang == 'ru' ? m[3] : m[2],
+                    textAlign: TextAlign.center, style: AppType.footnote.copyWith(color: c.text3)),
+              ]),
+            ),
+        ]);
+      }),
     );
   }
 }
