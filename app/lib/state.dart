@@ -349,11 +349,15 @@ class AppState extends ChangeNotifier {
     String region = '',
     String code = '',
     Uint8List? photo,
+    bool agree = false,
+    bool parent = false,
   }) async {
     if (username.trim().length < 3 || password.length < 4) return t('err_short');
     final asTeacher = code.trim().isNotEmpty;
     if (register) {
       if (name.trim().isEmpty) return t('err_profile');
+      if (!agree) return t('err_agree');
+      if (!asTeacher && !parent) return t('err_parent');
       if (!asTeacher) {
         if (school.trim().isEmpty || city.trim().isEmpty || region.trim().isEmpty) return t('err_school');
         if (photo == null) return t('err_photo');
@@ -375,6 +379,8 @@ class AppState extends ChangeNotifier {
               if (asTeacher) 'code': code.trim().toUpperCase(),
               if (!asTeacher) ...{'region': region, 'district': city, 'school': school},
               if (photo != null) 'photo': base64Encode(photo),
+              'agree': agree,
+              if (!asTeacher) 'parent': parent,
             },
           },
           const Duration(seconds: 40));
@@ -422,6 +428,19 @@ class AppState extends ChangeNotifier {
     examLast = {};
     await savePrefs();
     notifyListeners();
+  }
+
+  /// Hisobni butunlay o‘chirish; xato kodi yoki null / удалить аккаунт; код ошибки или null.
+  Future<String?> deleteAccount(String password) async {
+    if (!online) return 'conn';
+    try {
+      await api.call('/api/delete_account', {'password': password});
+    } on ApiError catch (e) {
+      return e.code;
+    }
+    token = '';
+    await logout();
+    return null;
   }
 
   Future<void> logout() async {

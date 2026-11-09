@@ -38,6 +38,7 @@ from progress import (HELPER_COST, LEAGUES, cancel_test, claim_quest, complete_l
 from runner import client_ip, handle_run
 import cloud  # noqa: E402  Supabase zaxirasi / резервная копия Supabase
 import platform_api  # noqa: E402  darslar, AI, kitoblar / уроки, AI, книги
+import legal  # noqa: E402  maxfiylik, shartlar / конфиденциальность, условия
 
 HERE = Path(__file__).resolve().parent
 DB_PATH = Path(os.environ.get("KODLA_DB_PATH", str(HERE / "kodla.db")))
@@ -156,6 +157,12 @@ def init_db():
         );
         CREATE INDEX IF NOT EXISTS ttests_school ON ttests(school_key);
         CREATE TABLE IF NOT EXISTS photos (user_id INTEGER PRIMARY KEY, ts REAL NOT NULL);
+        CREATE TABLE IF NOT EXISTS consents (
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            kind TEXT NOT NULL,
+            version TEXT NOT NULL,
+            ts REAL NOT NULL
+        );
         CREATE TABLE IF NOT EXISTS portfolio (
             user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             course TEXT NOT NULL,
@@ -278,6 +285,25 @@ def save_photo(conn, user_id, data):
     conn.execute("INSERT OR REPLACE INTO photos (user_id, ts) VALUES (?,?)", (int(user_id), time.time()))
     _photo_ids.add(int(user_id))
     cloud.put_async(f"photos/{int(user_id)}.img", data)
+
+
+def delete_photo(conn, user_id):
+    uid = int(user_id)
+    try:
+        photo_path(uid).unlink()
+    except FileNotFoundError:
+        pass
+    conn.execute("DELETE FROM photos WHERE user_id=?", (uid,))
+    _photo_ids.discard(uid)
+    cloud.delete_async(f"photos/{uid}.img")
+
+
+def delete_user(conn, user_id):
+    """Hisob va unga tegishli barcha ma’lumotlarni o‘chirish / удалить аккаунт и все его данные."""
+    uid = int(user_id)
+    delete_photo(conn, uid)
+    conn.execute("DELETE FROM ai_usage WHERE user_id=?", (uid,))
+    conn.execute("DELETE FROM users WHERE id=?", (uid,))
 
 
 def read_photo(user_id):
@@ -604,6 +630,15 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(200, {"ok": True, "app": "idrok"})
         if path == "/api/shop":
             return self.send_json(200, {"items": list(SHOP.values())})
+        if path in legal.PAGES:
+            page = legal.page(path, params.get("lang", "")).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(page)))
+            self.send_header("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'")
+            self.end_headers()
+            self.wfile.write(page)
+            return None
         if path.startswith("/c/"):
             with db() as conn:
                 row = conn.execute("SELECT * FROM certs WHERE id=?", (path[3:].strip().upper(),)).fetchone()
@@ -819,6 +854,13 @@ class Handler(BaseHTTPRequestHandler):
                         return self.send_json(409, {"error": "taken"})
                     if code:
                         conn.execute("UPDATE teacher_codes SET used_by=?, used_at=? WHERE code=?", (uid, time.time(), code))
+                    # Rozilik qayd etiladi (eski ilovalar yubormaydi) / согласие фиксируется (старые клиенты не шлют)
+                    if data.get("agree"):
+                        conn.execute("INSERT INTO consents (user_id, kind, version, ts) VALUES (?,?,?,?)",
+                                     (uid, "terms_privacy", legal.VERSION, time.time()))
+                    if data.get("parent") and role == "student":
+                        conn.execute("INSERT INTO consents (user_id, kind, version, ts) VALUES (?,?,?,?)",
+                                     (uid, "parent", legal.VERSION, time.time()))
                     if photo is not None:
                         save_photo(conn, uid, photo)
                 row = conn.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()
@@ -832,6 +874,15 @@ class Handler(BaseHTTPRequestHandler):
             if user is None:
                 return self.send_json(401, {"error": "auth"})
             old = state_of(user)
+
+            if path == "/api/delete_account":
+                password = str(data.get("password", ""))
+                if not secrets.compare_digest(user["pw_hash"], hash_pw(password, user["salt"])):
+                    return self.send_json(403, {"error": "password"})
+                if user["role"] == "admin":
+                    return self.send_json(403, {"error": "forbidden"})
+                delete_user(conn, user["id"])
+                return self.send_json(200, {"ok": True})
 
             game = ("/api/complete", "/api/placement", "/api/cancel", "/api/helper", "/api/claim", "/api/chest",
                     "/api/shop/buy", "/api/tests/submit", "/api/portfolio", "/api/exam/start", "/api/exam/finish")

@@ -121,6 +121,8 @@ jobs:
           PY
       - name: Web yig‘ish / сборка web
         run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+      - name: Maxfiylik sahifalari / страницы политики
+        run: python3 ../server/legal.py build/web
       - uses: actions/upload-artifact@v4
         with:
           name: web-build

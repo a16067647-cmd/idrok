@@ -142,6 +142,20 @@ def start(db_path: Path):
     threading.Thread(target=loop, daemon=True).start()
 
 
+def delete_async(name):
+    """Faylni o‘chirish (fon rejimida) / удалить файл (в фоне)."""
+    if not enabled:
+        return
+
+    def run():
+        try:
+            _request("DELETE", f"object/{BUCKET}/{name}")
+        except Exception as e:
+            print(f"  Supabase: o‘chirish xatosi / ошибка удаления {name}: {e}", flush=True)
+
+    threading.Thread(target=run, daemon=True).start()
+
+
 def put_async(name, data):
     if not enabled:
         return

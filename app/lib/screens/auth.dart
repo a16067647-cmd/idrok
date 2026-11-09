@@ -8,6 +8,7 @@ import '../state.dart';
 import '../theme.dart';
 import '../widgets.dart';
 import 'lessons_admin.dart' show ContactAdminCard;
+import 'legal.dart';
 import 'profile_form.dart';
 
 /// Kirish / ro‘yxatdan o‘tish / вход и регистрация.
@@ -28,6 +29,8 @@ class _AuthScreenState extends State<AuthScreen> {
   Uint8List? _photo;
   late final TextEditingController _server;
   bool _register = false;
+  bool _agree = false;
+  bool _parent = false;
   bool _showPass = false;
   bool _showServer = false;
   String _error = '';
@@ -67,6 +70,8 @@ class _AuthScreenState extends State<AuthScreen> {
       code: _asTeacher ? _code.text : '',
       photo: _photo,
       serverUrl: _server.text,
+      agree: _agree,
+      parent: _parent,
     );
     if (!mounted) return;
     setState(() {
@@ -175,6 +180,21 @@ class _AuthScreenState extends State<AuthScreen> {
                       const SizedBox(height: S.x4),
                       ProfileFields(name: _name, school: _school, onSchool: () => setState(() {})),
                     ],
+                    const SizedBox(height: S.x3),
+                    ConsentTile(
+                      key: const ValueKey('f-agree'),
+                      value: _agree,
+                      onChanged: (v) => setState(() => _agree = v),
+                      text: s.t('agree_terms'),
+                      links: [(s.t('privacy'), 'privacy'), (s.t('terms'), 'terms')],
+                    ),
+                    if (!_asTeacher)
+                      ConsentTile(
+                        key: const ValueKey('f-parent'),
+                        value: _parent,
+                        onChanged: (v) => setState(() => _parent = v),
+                        text: s.t('agree_parent'),
+                      ),
                   ]),
                 )
               : const SizedBox(width: double.infinity),
@@ -311,6 +331,14 @@ class _AuthScreenState extends State<AuthScreen> {
                     ),
                     const SizedBox(height: S.x5),
                     ContactAdminCard(text: s.t('forgot_pw')),
+                    const SizedBox(height: S.x4),
+                    Wrap(alignment: WrapAlignment.center, spacing: S.x4, children: [
+                      for (final l in [('privacy', 'privacy'), ('terms', 'terms')])
+                        GestureDetector(
+                          onTap: () => openLegal(context, l.$2),
+                          child: Text(s.t(l.$1), style: AppType.footnote.copyWith(color: c.text3)),
+                        ),
+                    ]),
                     ],
                   ],
                 ),

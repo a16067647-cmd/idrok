@@ -9,6 +9,7 @@ import '../widgets.dart';
 import 'cards.dart' show CardsScreen;
 import 'certificate.dart' show openCertificates;
 import 'profile_form.dart';
+import 'legal.dart';
 import 'reminder.dart' show ReminderScreen;
 
 /// Profil / Профиль.
@@ -187,11 +188,33 @@ class _ProfileTabState extends State<ProfileTab> {
           onTap: s.toggleLang),
     ]);
 
+    final legal = GroupList([
+      GroupRow(
+          key: const ValueKey('row-privacy'),
+          icon: Icons.privacy_tip_rounded,
+          color: const Color(0xFF0A6CFF),
+          title: s.t('privacy'),
+          onTap: () => openLegal(context, 'privacy')),
+      GroupRow(
+          key: const ValueKey('row-terms'),
+          icon: Icons.description_rounded,
+          color: const Color(0xFF8E8E93),
+          title: s.t('terms'),
+          onTap: () => openLegal(context, 'terms')),
+    ]);
+
     final account = GroupList([
-      if (s.online)
+      if (s.online) ...[
         GroupRow(
-            icon: Icons.logout_rounded, color: const Color(0xFFFF3B30), title: s.t('logout'), onTap: s.logout)
-      else ...[
+            icon: Icons.logout_rounded, color: const Color(0xFFFF3B30), title: s.t('logout'), onTap: s.logout),
+        if (s.role != 'admin')
+          GroupRow(
+              key: const ValueKey('row-delete'),
+              icon: Icons.person_remove_rounded,
+              color: const Color(0xFFFF3B30),
+              title: s.t('del_account'),
+              onTap: () => showAppSheet<void>(context, builder: (_) => const _DeleteSheet())),
+      ] else ...[
         GroupRow(icon: Icons.login_rounded, color: const Color(0xFF0A6CFF), title: s.t('login_btn'), onTap: s.logout),
         GroupRow(
             icon: Icons.restart_alt_rounded, color: const Color(0xFFFF3B30), title: s.t('reset'), onTap: _confirmReset),
@@ -203,6 +226,7 @@ class _ProfileTabState extends State<ProfileTab> {
         head,
         if (!s.isStaff) ...[stats, learning],
         settings,
+        legal,
         account,
       ],
     );
@@ -275,6 +299,82 @@ class _EditSheetState extends State<_EditSheet> {
       const SizedBox(height: S.x4),
       AppButton(s.t('save'),
           key: const ValueKey('profile-save'), onPressed: _busy ? null : _save, loading: _busy, expand: true),
+    ]);
+  }
+}
+
+/// Hisobni o‘chirish — parol bilan tasdiqlash / удаление аккаунта — подтверждение паролем.
+class _DeleteSheet extends StatefulWidget {
+  const _DeleteSheet();
+
+  @override
+  State<_DeleteSheet> createState() => _DeleteSheetState();
+}
+
+class _DeleteSheetState extends State<_DeleteSheet> {
+  final _pass = TextEditingController();
+  bool _busy = false;
+  String _error = '';
+
+  @override
+  void dispose() {
+    _pass.dispose();
+    super.dispose();
+  }
+
+  Future<void> _go() async {
+    final s = AppScope.read(context);
+    if (_pass.text.isEmpty || _busy) return;
+    setState(() {
+      _busy = true;
+      _error = '';
+    });
+    final err = await s.deleteAccount(_pass.text);
+    if (!mounted) return;
+    if (err == null) {
+      Navigator.of(context).pop();
+      s.toast(s.t('del_done'), icon: Icons.check_circle_rounded);
+      return;
+    }
+    setState(() {
+      _busy = false;
+      _error = err == 'password' ? s.t('del_wrong') : s.t('err_conn');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = AppScope.of(context);
+    final c = s.c;
+    return Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Center(child: IconTile(Icons.person_remove_rounded, size: 60, circle: true, bg: c.dangerSoft, color: c.danger)),
+      const SizedBox(height: S.x4),
+      Text(s.t('del_account'), textAlign: TextAlign.center, style: AppType.title2.copyWith(color: c.text)),
+      const SizedBox(height: S.x2),
+      Text(s.t('del_q'), textAlign: TextAlign.center, style: AppType.callout.copyWith(color: c.text2)),
+      const SizedBox(height: S.x5),
+      AppTextField(
+        key: const ValueKey('del-pass'),
+        controller: _pass,
+        label: s.t('password'),
+        icon: Icons.lock_rounded,
+        obscure: true,
+        onSubmitted: (_) => _go(),
+      ),
+      if (_error.isNotEmpty) ...[
+        const SizedBox(height: S.x3),
+        Text(_error, textAlign: TextAlign.center, style: AppType.footnote.copyWith(color: c.danger)),
+      ],
+      const SizedBox(height: S.x5),
+      AppButton(s.t('del_btn'),
+          key: const ValueKey('del-go'),
+          kind: BtnKind.danger,
+          expand: true,
+          loading: _busy,
+          icon: Icons.delete_forever_rounded,
+          onPressed: _go),
+      const SizedBox(height: S.x3),
+      AppButton(s.t('no'), kind: BtnKind.secondary, expand: true, onPressed: () => Navigator.of(context).pop()),
     ]);
   }
 }
