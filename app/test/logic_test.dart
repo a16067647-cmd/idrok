@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:flutter/services.dart' show ByteData;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:kodla/course_art.dart';
 import 'package:kodla/lessons.dart';
 import 'package:kodla/progress.dart';
 import 'package:kodla/screens/certificate.dart';
@@ -367,6 +368,23 @@ void main() {
           logo: File('assets/icon/icon.png').readAsBytesSync()));
       expect(String.fromCharCodes(bytes.take(4)), '%PDF');
       expect(bytes.length, greaterThan(5000));
+    });
+  });
+
+  group('course pixel art', () {
+    test('every course has a 16x16 icon that uses only palette colours', () {
+      for (final co in kCourses) {
+        final rows = kPixelArt[co.id];
+        expect(rows, isNotNull, reason: 'no pixel art for ${co.id}');
+        expect(rows!.length, kPixelGrid, reason: co.id);
+        for (final r in rows) {
+          expect(r.length, kPixelGrid, reason: '${co.id}: "$r"');
+          for (final ch in r.split('')) {
+            expect(ch == '.' || kPixelPalette.containsKey(ch), isTrue, reason: '${co.id}: "$ch"');
+          }
+        }
+        expect(kCourseTint[co.id], hasLength(2), reason: co.id);
+      }
     });
   });
 }

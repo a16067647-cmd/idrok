@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../course_art.dart';
 import '../lessons.dart';
 import '../progress.dart';
 import '../state.dart';
@@ -495,15 +496,7 @@ class _ShineState extends State<_Shine> with SingleTickerProviderStateMixin {
   }
 }
 
-// ------------------------------------------------------------ rangli kurs kartalari / цветные карточки курсов
-const Map<String, List<Color>> kTileColors = {
-  'html': [Color(0xFF4DB0FF), Color(0xFF0A6CFF)],
-  'css': [Color(0xFF4656FF), Color(0xFF0A1226)],
-  'js': [Color(0xFF2CC4F7), Color(0xFF0A84D6)],
-  'py': [Color(0xFF9A8CFF), Color(0xFF5B6CFF)],
-  'ai': [Color(0xFFB45CFF), Color(0xFF2D3FE0)],
-};
-
+// ------------------------------------------------------------ shisha kurs kartalari / стеклянные карточки курсов
 class _CourseGrid extends StatelessWidget {
   const _CourseGrid();
 
@@ -534,15 +527,14 @@ class _CourseTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppScope.of(context);
+    final c = s.c;
     final d = s.progressOf(co), n = s.lessonsOf(co).length;
-    final colors = kTileColors[co.id] ?? [hexColor(co.color), hexColor(co.color)];
     final cert = s.certs[co.id];
     final examReady = !s.isStaff && cert == null && s.courseComplete(co) && s.examWait(co) == Duration.zero;
-    final white80 = kWhite.withAlpha(0xCC);
 
     Widget? badge;
     if (cert != null) {
-      badge = const Icon(Icons.workspace_premium_rounded, color: Color(0xFFFFD54A), size: 22, shadows: kTextShadow);
+      badge = const Icon(Icons.workspace_premium_rounded, color: Color(0xFFFFB300), size: 22);
     } else if (examReady) {
       badge = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -558,50 +550,36 @@ class _CourseTile extends StatelessWidget {
         s.pickCourse(co.id);
         s.go('courses');
       },
-      child: Container(
+      child: CourseGlass(
+        course: co,
         height: wide ? 150 : 172,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: R.all(R.xl),
-          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: colors),
-          boxShadow: [BoxShadow(color: colors.last.withAlpha(0x40), blurRadius: 18, offset: const Offset(0, 8))],
-        ),
-        child: Stack(children: [
-          // katta belgi / большой значок
-          Positioned(
-            right: -10,
-            bottom: wide ? -18 : -8,
-            child: Floaty(
-              amount: 5,
-              phase: index * 0.21,
-              period: Duration(milliseconds: 3600 + index * 300),
-              child: Text(co.tag,
-                  style: AppType.monoStrong.copyWith(
-                      fontSize: wide ? 84 : 64, color: kWhite.withAlpha(0x2E), letterSpacing: -2, height: 1)),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(S.x4),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                CourseTag(co, size: 34, fontSize: 11, onColorBg: true),
-                const Spacer(),
-                if (badge != null) badge,
-              ]),
+        child: Padding(
+          padding: const EdgeInsets.all(S.x4),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              // piksel-art belgi / пиксель-арт значок
+              Floaty(
+                amount: 3,
+                phase: index * 0.21,
+                period: Duration(milliseconds: 3600 + index * 300),
+                child: CoursePixel(co, size: 48),
+              ),
               const Spacer(),
-              Text(s.tr(co.name),
-                  maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.headline.copyWith(color: kWhite, fontSize: 17)),
-              const SizedBox(height: 1),
-              Text(s.tr(co.sub), maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.caption.copyWith(color: white80)),
-              const SizedBox(height: S.x3),
-              Row(children: [
-                Expanded(child: AppProgress(n == 0 ? 0 : d / n, height: 5, color: kWhite, track: const Color(0x33FFFFFF))),
-                const SizedBox(width: S.x2),
-                Text('$d/$n', style: AppType.caption.copyWith(color: kWhite)),
-              ]),
+              if (badge != null) badge,
             ]),
-          ),
-        ]),
+            const Spacer(),
+            Text(s.tr(co.name),
+                maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.headline.copyWith(color: c.text, fontSize: 17)),
+            const SizedBox(height: 1),
+            Text(s.tr(co.sub), maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.caption.copyWith(color: c.text2)),
+            const SizedBox(height: S.x3),
+            Row(children: [
+              Expanded(child: AppProgress(n == 0 ? 0 : d / n, height: 6, color: courseAccent(co, c))),
+              const SizedBox(width: S.x2),
+              Text('$d/$n', style: AppType.caption.copyWith(color: c.text)),
+            ]),
+          ]),
+        ),
       ),
     );
   }
