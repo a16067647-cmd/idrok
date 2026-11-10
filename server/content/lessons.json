@@ -328,5 +328,133 @@
   "leagues": [
    "master"
   ]
+ },
+ "cy1": {
+  "course": "cy",
+  "xp": 20,
+  "leagues": null
+ },
+ "cy2": {
+  "course": "cy",
+  "xp": 20,
+  "leagues": null
+ },
+ "cy3": {
+  "course": "cy",
+  "xp": 20,
+  "leagues": null
+ },
+ "cy4": {
+  "course": "cy",
+  "xp": 20,
+  "leagues": null
+ },
+ "cy5": {
+  "course": "cy",
+  "xp": 20,
+  "leagues": null
+ },
+ "cy6": {
+  "course": "cy",
+  "xp": 20,
+  "leagues": [
+   "advanced",
+   "master"
+  ]
+ },
+ "cy7": {
+  "course": "cy",
+  "xp": 20,
+  "leagues": [
+   "advanced",
+   "master"
+  ]
+ },
+ "cy8": {
+  "course": "cy",
+  "xp": 20,
+  "leagues": [
+   "advanced",
+   "master"
+  ]
+ },
+ "cy9": {
+  "course": "cy",
+  "xp": 20,
+  "leagues": [
+   "advanced",
+   "master"
+  ]
+ },
+ "cy10": {
+  "course": "cy",
+  "xp": 20,
+  "leagues": [
+   "advanced",
+   "master"
+  ]
+ },
+ "cy11": {
+  "course": "cy",
+  "xp": 30,
+  "leagues": [
+   "master"
+  ]
+ },
+ "cy12": {
+  "course": "cy",
+  "xp": 30,
+  "leagues": [
+   "master"
+  ]
+ },
+ "cy13": {
+  "course": "cy",
+  "xp": 30,
+  "leagues": [
+   "master"
+  ]
+ },
+ "cy14": {
+  "course": "cy",
+  "xp": 30,
+  "leagues": [
+   "master"
+  ]
+ },
+ "cy15": {
+  "course": "cy",
+  "xp": 30,
+  "leagues": [
+   "master"
+  ]
+ },
+ "cy16": {
+  "course": "cy",
+  "xp": 30,
+  "leagues": [
+   "master"
+  ]
+ },
+ "cy17": {
+  "course": "cy",
+  "xp": 30,
+  "leagues": [
+   "master"
+  ]
+ },
+ "cy18": {
+  "course": "cy",
+  "xp": 30,
+  "leagues": [
+   "master"
+  ]
+ },
+ "cy19": {
+  "course": "cy",
+  "xp": 30,
+  "leagues": [
+   "master"
+  ]
  }
 }

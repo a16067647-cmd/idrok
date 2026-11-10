@@ -2,6 +2,7 @@
 // MUHIM: id va xp server/content/lessons.json bilan bir xil bo‘lishi shart (test tekshiradi).
 // ВАЖНО: id и xp должны совпадать с server/content/lessons.json (проверяется тестом).
 import 'ai.dart';
+import 'cyber.dart';
 import 'css.dart';
 import 'data_lesson.dart';
 import 'html.dart';
@@ -112,6 +113,30 @@ final List<Course> kCourses = [
     _l('aiM2', 'ai', const Tr('k-NN tanish', 'Распознавание k-NN'), aiM2, xp: kProjectXp, leagues: kMaster),
     _l('aiM3', 'ai', const Tr('Moslashuvchan test', 'Адаптивный тест'), aiM3, xp: kProjectXp, leagues: kMaster),
     _l('aiM4', 'ai', const Tr('Sun’iy neyron', 'Искусственный нейрон'), aiM4, xp: kProjectXp, leagues: kMaster),
+  ]),
+  // Kiberxavfsizlik: asoslar hamma uchun, chuqur darslar ilg‘or va ustalar ligasi uchun.
+  // Кибербезопасность: основы для всех, глубокие уроки для продвинутой и мастер-лиги.
+  Course(id: 'cy', tag: 'SEC', color: '#0B2A4A', name: const Tr('Kiberxavfsizlik', 'Кибербезопасность'),
+      sub: const Tr('Himoyachi bo‘lib o‘ylash', 'Думать как защитник'), lessons: [
+    _l('cy1', 'cy', const Tr('Kiberxavfsizlik nima?', 'Что такое кибербезопасность?'), cy1),
+    _l('cy2', 'cy', const Tr('Parol va 2FA', 'Пароль и 2FA'), cy2),
+    _l('cy3', 'cy', const Tr('Fishing', 'Фишинг'), cy3),
+    _l('cy4', 'cy', const Tr('Raqamli iz', 'Цифровой след'), cy4),
+    _l('cy5', 'cy', const Tr('Qurilma himoyasi', 'Защита устройства'), cy5),
+    _l('cy6', 'cy', const Tr('Internet ichidan', 'Интернет изнутри'), cy6, leagues: kAdvMaster),
+    _l('cy7', 'cy', const Tr('Shifrlash', 'Шифрование'), cy7, leagues: kAdvMaster),
+    _l('cy8', 'cy', const Tr('HTTPS', 'HTTPS'), cy8, leagues: kAdvMaster),
+    _l('cy9', 'cy', const Tr('Zararli dasturlar', 'Вредоносные программы'), cy9, leagues: kAdvMaster),
+    _l('cy10', 'cy', const Tr('Xesh va parollar', 'Хеш и пароли'), cy10, leagues: kAdvMaster),
+    _l('cy11', 'cy', const Tr('Shifr kodda', 'Шифр в коде'), cy11, xp: kProjectXp, leagues: kMaster),
+    _l('cy12', 'cy', const Tr('Parol matematikasi', 'Математика паролей'), cy12, xp: kProjectXp, leagues: kMaster),
+    _l('cy13', 'cy', const Tr('SQL injection himoyasi', 'Защита от SQL-инъекций'), cy13, xp: kProjectXp, leagues: kMaster),
+    _l('cy14', 'cy', const Tr('XSS himoyasi', 'Защита от XSS'), cy14, xp: kProjectXp, leagues: kMaster),
+    _l('cy15', 'cy', const Tr('Loglar va aniqlash', 'Логи и обнаружение'), cy15, xp: kProjectXp, leagues: kMaster),
+    _l('cy16', 'cy', const Tr('Ijtimoiy muhandislik', 'Социальная инженерия'), cy16, xp: kProjectXp, leagues: kMaster),
+    _l('cy17', 'cy', const Tr('Tarmoq himoyasi', 'Защита сети'), cy17, xp: kProjectXp, leagues: kMaster),
+    _l('cy18', 'cy', const Tr('Etika va kasb', 'Этика и профессия'), cy18, xp: kProjectXp, leagues: kMaster),
+    _l('cy19', 'cy', const Tr('CTF: bayroq', 'CTF: флаг'), cy19, xp: kProjectXp, leagues: kMaster),
   ]),
 ];
 

@@ -13,7 +13,7 @@ import time
 import urllib.error
 import urllib.request
 
-COURSES = ("pc", "html", "css", "js", "py", "ai")
+COURSES = ("pc", "html", "css", "js", "py", "ai", "cy")
 LEAGUES = ("beginner", "advanced", "master")
 ANIM_KINDS = ("trace", "render", "chat", "box", "flex", "learn", "grid")
 STEP_TYPES = ("read", "quiz", "fill", "order", "try")

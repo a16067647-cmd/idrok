@@ -629,6 +629,7 @@ const Map<String, List<Color>> kTileColors = {
   'js': [Color(0xFF2CC4F7), Color(0xFF0A84D6)],
   'py': [Color(0xFF9A8CFF), Color(0xFF5B6CFF)],
   'ai': [Color(0xFFB45CFF), Color(0xFF2D3FE0)],
+  'cy': [Color(0xFF1E4D7B), Color(0xFF07101F)],
 };
 
 class _CourseGrid extends StatelessWidget {
