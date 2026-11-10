@@ -184,6 +184,27 @@ class CardsScreen extends StatelessWidget {
   }
 }
 
+/// Konspektlar — kompyuter menyusi uchun / конспекты — для меню компьютера.
+class CardsTab extends StatelessWidget {
+  const CardsTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = AppScope.of(context);
+    final ids = [for (final id in s.savedCards) if (kAllLessons.containsKey(id)) id];
+    return TabPage(
+      title: s.t('my_cards'),
+      subtitle: s.t('my_cards_sub'),
+      children: [
+        if (ids.isEmpty)
+          EmptyState(icon: Icons.bookmark_border_rounded, title: s.t('cards_empty'))
+        else
+          for (final id in ids) SummaryCard(lesson: kAllLessons[id]!.$1, course: kAllLessons[id]!.$2),
+      ],
+    );
+  }
+}
+
 /// Profildagi “Konspektlarim” qatori / строка «Мои конспекты» в профиле.
 class CardsTile extends StatelessWidget {
   const CardsTile({super.key});

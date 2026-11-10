@@ -1866,83 +1866,28 @@ class TabPage extends StatelessWidget {
   }
 }
 
-/// Kompyuter uchun yon menyu / боковое меню для компьютера.
-class SideNav extends StatelessWidget {
-  final List<(String, IconData, String)> items; // (id, ikonka, nom)
-  final int index;
-  final ValueChanged<int> onTap;
-  final Widget logo;
-  final String title;
-  final Widget? footer;
-  const SideNav(
-      {super.key,
-      required this.items,
-      required this.index,
-      required this.onTap,
-      required this.logo,
-      required this.title,
-      this.footer});
-
-  @override
-  Widget build(BuildContext context) {
-    final c = colorsOf(context);
-    return Container(
-      width: 248,
-      margin: const EdgeInsets.all(S.x4),
-      padding: const EdgeInsets.all(S.x4),
-      decoration: BoxDecoration(
-        color: c.surface,
-        borderRadius: R.all(R.xxl),
-        border: Border.all(color: c.hairline),
-        boxShadow: Shadows.card(c),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(S.x1, S.x1, S.x1, S.x5),
-          child: Row(children: [
-            logo,
-            const SizedBox(width: S.x3),
-            Expanded(
-              child: Text(title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppType.headline.copyWith(color: c.text, fontWeight: w8)),
-            ),
-          ]),
-        ),
-        Expanded(
-          child: ListView(padding: EdgeInsets.zero, children: [
-            for (var i = 0; i < items.length; i++)
-              Padding(
-                padding: const EdgeInsets.only(bottom: S.x1),
-                child: _SideItem(
-                  key: ValueKey('side-${items[i].$1}'),
-                  icon: items[i].$2,
-                  label: items[i].$3,
-                  selected: i == index,
-                  onTap: () => onTap(i),
-                ),
-              ),
-          ]),
-        ),
-        if (footer != null) footer!,
-      ]),
-    );
-  }
-}
-
-class _SideItem extends StatefulWidget {
+/// Yon menyu tugmasi (kompyuter) / пункт бокового меню (компьютер).
+class SideItem extends StatefulWidget {
   final IconData icon;
   final String label;
   final bool selected;
+  final bool collapsed;
+  final Widget? trailing;
   final VoidCallback onTap;
-  const _SideItem({super.key, required this.icon, required this.label, required this.selected, required this.onTap});
+  const SideItem(
+      {super.key,
+      required this.icon,
+      required this.label,
+      required this.onTap,
+      this.selected = false,
+      this.collapsed = false,
+      this.trailing});
 
   @override
-  State<_SideItem> createState() => _SideItemState();
+  State<SideItem> createState() => _SideItemState();
 }
 
-class _SideItemState extends State<_SideItem> {
+class _SideItemState extends State<SideItem> {
   bool _hover = false;
 
   @override
@@ -1960,24 +1905,32 @@ class _SideItemState extends State<_SideItem> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: S.x3, vertical: 11),
+          padding: EdgeInsets.symmetric(horizontal: widget.collapsed ? 0 : S.x3, vertical: 11),
           decoration: BoxDecoration(
             gradient: sel ? c.accentGradient : null,
             color: sel ? null : (_hover ? c.accentSoft : Colors.transparent),
             borderRadius: R.all(R.md),
             boxShadow: sel ? Shadows.glow(c.accent, c, strength: 0.7) : null,
           ),
-          child: Row(children: [
-            Icon(widget.icon, size: 21, color: sel ? Colors.white : (_hover ? c.accentText : c.text2)),
-            const SizedBox(width: S.x3),
-            Expanded(
-              child: Text(widget.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppType.subhead
-                      .copyWith(color: sel ? Colors.white : (_hover ? c.accentText : c.text), fontWeight: sel ? w7 : w6)),
-            ),
-          ]),
+          child: widget.collapsed
+              ? Tooltip(
+                  message: widget.label,
+                  child: Center(
+                      child: Icon(widget.icon, size: 22, color: sel ? Colors.white : (_hover ? c.accentText : c.text2))),
+                )
+              : Row(children: [
+                  Icon(widget.icon, size: 21, color: sel ? Colors.white : (_hover ? c.accentText : c.text2)),
+                  const SizedBox(width: S.x3),
+                  Expanded(
+                    child: Text(widget.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                        softWrap: false,
+                        style: AppType.subhead.copyWith(
+                            color: sel ? Colors.white : (_hover ? c.accentText : c.text), fontWeight: sel ? w7 : w6)),
+                  ),
+                  if (widget.trailing != null) widget.trailing!,
+                ]),
         ),
       ),
     );

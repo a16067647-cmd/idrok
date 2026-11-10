@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'config.dart';
 import 'screens/auth.dart';
+import 'screens/cards.dart' show CardsTab;
 import 'screens/courses.dart';
 import 'screens/home.dart';
 import 'screens/intro.dart';
@@ -228,7 +229,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final s = AppScope.of(context);
     final tabs = s.tabs;
-    final tab = tabs.contains(s.tab) ? s.tab : tabs.first;
+    final wide = isWide(context);
+    const deskExtra = ['play', 'cards', 'shop'];
+    final tab = tabs.contains(s.tab) || (wide && !s.isStaff && deskExtra.contains(s.tab)) ? s.tab : tabs.first;
     s.pageBuilder ??= (id) => switch (id) {
           'courses' => const CoursesTab(),
           'play' => const PlayTab(),
@@ -248,6 +251,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       'orders' => const AdminOrdersTab(),
       'dash' => const AdminDashTab(),
       'lessons' => const LessonsTab(),
+      'cards' => const CardsTab(),
       _ => const HomeTab(),
     };
 
@@ -266,7 +270,6 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     };
     final sel = tabs.contains(tab) ? tabs.indexOf(tab) : tabs.length - 1;
 
-    final wide = isWide(context);
     final switcher = AnimatedSwitcher(
       duration: Motion.of(context, Motion.base),
       switchInCurve: Motion.curve,
@@ -306,14 +309,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
               child: wide
                   // Kompyuter: yon menyu + keng maydon / компьютер: боковое меню + широкая область
                   ? Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                      SideNav(
-                        items: navItems,
-                        index: sel,
-                        onTap: onNav,
-                        logo: const AppLogo(size: 40),
-                        title: kAppName,
-                        footer: _SideFooter(),
-                      ),
+                      _DeskNav(tabs: tabs, tab: tab, meta: meta),
                       Expanded(child: switcher),
                     ])
                   : Align(
@@ -329,32 +325,251 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   }
 }
 
-/// Yon menyu pasti: foydalanuvchi / низ бокового меню: пользователь.
-class _SideFooter extends StatelessWidget {
+/// Kompyuter yon menyusi: yig‘iladi / ochiladi bir bosishda.
+/// Боковое меню компьютера: сворачивается / открывается одним нажатием.
+class _DeskNav extends StatelessWidget {
+  final List<String> tabs;
+  final String tab;
+  final Map<String, (IconData, String)> meta;
+  const _DeskNav({required this.tabs, required this.tab, required this.meta});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = AppScope.of(context);
+    final c = s.c;
+    final open = s.sideOpen;
+    void go(String id) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      s.openSide(id);
+    }
+
+    Widget item(String id, IconData icon, String label) => Padding(
+          padding: const EdgeInsets.only(bottom: S.x1),
+          child: SideItem(
+            key: ValueKey('side-$id'),
+            icon: icon,
+            label: label,
+            selected: tab == id,
+            collapsed: !open,
+            onTap: () => go(id),
+          ),
+        );
+    Widget label(String text) => open
+        ? Padding(
+            padding: const EdgeInsets.fromLTRB(S.x3, S.x4, S.x3, S.x2),
+            child: Text(text.toUpperCase(),
+                maxLines: 1,
+                overflow: TextOverflow.clip,
+                softWrap: false,
+                style: AppType.caption.copyWith(color: c.text3, fontWeight: w7, letterSpacing: 0.8)),
+          )
+        : Padding(
+            padding: const EdgeInsets.symmetric(vertical: S.x3, horizontal: S.x3),
+            child: Container(height: 1, color: c.hairline),
+          );
+
+    final main = [for (final k in tabs) if (k != 'profile') k];
+    final themeIcon = switch (s.theme) {
+      'light' => Icons.light_mode_rounded,
+      'dark' => Icons.dark_mode_rounded,
+      _ => Icons.brightness_auto_rounded,
+    };
+    void nextTheme() => s.setTheme(switch (s.theme) { 'system' => 'light', 'light' => 'dark', _ => 'system' });
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
+      width: open ? 256 : 84,
+      margin: const EdgeInsets.all(S.x4),
+      padding: const EdgeInsets.symmetric(horizontal: S.x3, vertical: S.x4),
+      decoration: BoxDecoration(
+        color: c.surface,
+        borderRadius: R.all(R.xxl),
+        border: Border.all(color: c.hairline),
+        boxShadow: Shadows.card(c),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        // Logotip va yig‘ish tugmasi / логотип и кнопка сворачивания
+        SizedBox(
+          height: 44,
+          child: open
+              ? Row(children: [
+                  const SizedBox(width: S.x1),
+                  const AppLogo(size: 38),
+                  const SizedBox(width: S.x3),
+                  Expanded(
+                    child: Text(kAppName,
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                        softWrap: false,
+                        style: AppType.headline.copyWith(color: c.text, fontWeight: w8)),
+                  ),
+                  _NavIconBtn(
+                      key: const ValueKey('side-toggle'),
+                      icon: Icons.keyboard_double_arrow_left_rounded,
+                      tip: s.t('side_hide'),
+                      onTap: s.toggleSide),
+                ])
+              : Center(
+                  child: _NavIconBtn(
+                      key: const ValueKey('side-toggle'),
+                      icon: Icons.menu_rounded,
+                      tip: s.t('side_show'),
+                      onTap: s.toggleSide),
+                ),
+        ),
+        const SizedBox(height: S.x3),
+        Expanded(
+          child: ListView(padding: EdgeInsets.zero, children: [
+            for (final k in main) item(k, meta[k]!.$1, meta[k]!.$2),
+            if (!s.isStaff) ...[
+              label(s.t('side_tools')),
+              item('play', Icons.terminal_rounded, s.t('play')),
+              item('cards', Icons.bookmarks_rounded, s.t('my_cards')),
+              item('shop', Icons.storefront_rounded, s.t('shop_title')),
+            ],
+            label(s.t('settings')),
+            Padding(
+              padding: const EdgeInsets.only(bottom: S.x1),
+              child: SideItem(
+                key: const ValueKey('side-lang'),
+                icon: Icons.translate_rounded,
+                label: s.t('language'),
+                collapsed: !open,
+                onTap: s.toggleLang,
+                trailing: _Chip(s.lang == 'uz' ? 'UZ' : 'RU'),
+              ),
+            ),
+            SideItem(
+              key: const ValueKey('side-theme'),
+              icon: themeIcon,
+              label: s.t('appearance'),
+              collapsed: !open,
+              onTap: nextTheme,
+              trailing: _Chip(s.t(s.theme)),
+            ),
+          ]),
+        ),
+        const SizedBox(height: S.x3),
+        _ProfileCard(selected: tab == 'profile', collapsed: !open, onTap: () => go('profile')),
+      ]),
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  final String text;
+  const _Chip(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    final c = colorsOf(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: S.x2, vertical: 3),
+      decoration: BoxDecoration(color: c.accentSoft, borderRadius: R.all(R.sm)),
+      child: Text(text, style: AppType.caption.copyWith(color: c.accentText, fontWeight: w7)),
+    );
+  }
+}
+
+class _NavIconBtn extends StatelessWidget {
+  final IconData icon;
+  final String tip;
+  final VoidCallback onTap;
+  const _NavIconBtn({super.key, required this.icon, required this.tip, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = colorsOf(context);
+    return Tooltip(
+      message: tip,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Pressable(
+          onTap: onTap,
+          semanticLabel: tip,
+          child: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(color: c.surfaceAlt, borderRadius: R.all(R.md)),
+            child: Icon(icon, size: 22, color: c.text2),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Pastdagi profil kartasi (iOS uslubida) / карточка профиля внизу (в стиле iOS).
+class _ProfileCard extends StatelessWidget {
+  final bool selected;
+  final bool collapsed;
+  final VoidCallback onTap;
+  const _ProfileCard({required this.selected, required this.collapsed, required this.onTap});
+
   @override
   Widget build(BuildContext context) {
     final s = AppScope.of(context);
     final c = s.c;
     final name = s.displayName.trim().isEmpty ? s.username : s.displayName.trim();
-    return Container(
-      padding: const EdgeInsets.all(S.x3),
-      decoration: BoxDecoration(color: c.accentSoft, borderRadius: R.all(R.lg)),
-      child: Row(children: [
-        IconTile(Icons.person_rounded, size: 38, circle: true, bg: c.surface, color: c.accentText),
-        const SizedBox(width: S.x3),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(name.isEmpty ? kAppName : name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppType.subhead.copyWith(color: c.text, fontWeight: w7)),
-            Text(s.isStaff ? s.t(s.isAdmin ? 'role_admin' : 'role_teacher') : '${s.st.xp} XP',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppType.footnote.copyWith(color: c.text2)),
-          ]),
+    final photo = s.myPhoto;
+    final initial = name.isEmpty ? 'I' : name.characters.first.toUpperCase();
+    final avatar = Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: photo == null ? c.accentGradient : null,
+        border: Border.all(color: selected ? Colors.white : c.surface, width: 2),
+      ),
+      clipBehavior: Clip.antiAlias,
+      alignment: Alignment.center,
+      child: photo != null && photo.isNotEmpty
+          ? Image.memory(photo, fit: BoxFit.cover, width: 40, height: 40)
+          : Text(initial, style: AppType.headline.copyWith(color: Colors.white)),
+    );
+    final sub = s.isStaff ? s.t(s.isAdmin ? 'role_admin' : 'role_teacher') : '${s.st.xp} XP · ${s.leagueName}';
+    return Tooltip(
+      message: collapsed ? s.t('me_tab') : '',
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Pressable(
+          key: const ValueKey('side-profile'),
+          onTap: onTap,
+          scale: 0.98,
+          semanticLabel: s.t('me_tab'),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: EdgeInsets.all(collapsed ? S.x1 : S.x2),
+            decoration: BoxDecoration(
+              gradient: selected ? c.accentGradient : null,
+              color: selected ? null : c.surfaceAlt,
+              borderRadius: R.all(R.lg),
+              boxShadow: selected ? Shadows.glow(c.accent, c, strength: 0.6) : null,
+            ),
+            child: collapsed
+                ? Center(child: avatar)
+                : Row(children: [
+                    avatar,
+                    const SizedBox(width: S.x3),
+                    Expanded(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(name.isEmpty ? kAppName : name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppType.subhead.copyWith(color: selected ? Colors.white : c.text, fontWeight: w7)),
+                        Text(sub,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppType.caption.copyWith(color: selected ? Colors.white70 : c.text2)),
+                      ]),
+                    ),
+                    Icon(Icons.chevron_right_rounded, color: selected ? Colors.white : c.text3),
+                  ]),
+          ),
         ),
-      ]),
+      ),
     );
   }
 }

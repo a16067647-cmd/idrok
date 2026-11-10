@@ -78,25 +78,58 @@ class _IntroVideoState extends State<IntroVideo> {
   @override
   Widget build(BuildContext context) {
     final ready = _c.value.isInitialized;
+    final size = MediaQuery.sizeOf(context);
+    final ar = ready && _c.value.size.height > 0 ? _c.value.size.width / _c.value.size.height : 9 / 16;
+    // Kompyuter: video o‘rtada, chetlari fonga silliq qo‘shiladi (telefon ramkasi ko‘rinmaydi).
+    // Компьютер: видео по центру, края плавно растворяются в фоне (без «рамки телефона»).
+    final desk = size.width / size.height > ar * 1.15;
+    final video = ready
+        ? SizedBox.expand(
+            child: FittedBox(
+              fit: desk ? BoxFit.contain : BoxFit.cover,
+              child: SizedBox(width: _c.value.size.width, height: _c.value.size.height, child: VideoPlayer(_c)),
+            ),
+          )
+        : const SizedBox.expand();
+    Widget body = video;
+    if (desk) {
+      final vw = size.height * ar;
+      final l = ((size.width - vw) / 2) / size.width; // video chap cheti / левый край видео
+      final fade = (vw * 0.32) / size.width;
+      body = Stack(fit: StackFit.expand, children: [
+        const DecoratedBox(decoration: BoxDecoration(gradient: _deskBg)),
+        Center(child: SizedBox(width: size.width * 0.55, height: size.height * 0.9, child: const DecoratedBox(
+          decoration: BoxDecoration(gradient: RadialGradient(colors: [Color(0x552A6CFF), Color(0x002A6CFF)])),
+        ))),
+        video,
+        // Video ustidan chetlarni yashiruvchi qatlam / слой, скрывающий края видео
+        IgnorePointer(
+          child: ShaderMask(
+            blendMode: BlendMode.dstIn,
+            shaderCallback: (r) => LinearGradient(
+              colors: const [Colors.white, Colors.white, Colors.transparent, Colors.transparent, Colors.white, Colors.white],
+              stops: [0, l + 0.002, (l + fade).clamp(0.0, 0.5), (1 - l - fade).clamp(0.5, 1.0), 1 - l - 0.002, 1],
+            ).createShader(r),
+            child: const DecoratedBox(decoration: BoxDecoration(gradient: _deskBg)),
+          ),
+        ),
+      ]);
+    }
     return ColoredBox(
       color: _bg,
       child: AnimatedOpacity(
         opacity: ready ? 1 : 0,
         duration: const Duration(milliseconds: 250),
-        child: ready
-            ? SizedBox.expand(
-                child: FittedBox(
-                  // Kompyuterda video kesilmaydi, o‘rtada turadi / на компьютере видео не обрезается
-                  fit: MediaQuery.sizeOf(context).width >= 700 ? BoxFit.contain : BoxFit.cover,
-                  child: SizedBox(
-                    width: _c.value.size.width,
-                    height: _c.value.size.height,
-                    child: VideoPlayer(_c),
-                  ),
-                ),
-              )
-            : const SizedBox.expand(),
+        child: body,
       ),
     );
   }
+
+  /// Video chetlariga mos fon / фон под цвет краёв видео.
+  static const _deskBg = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF00071F), Color(0xFF003466), Color(0xFF001E58), Color(0xFF001C55)],
+    stops: [0, 0.3, 0.6, 1],
+  );
 }

@@ -122,6 +122,7 @@ class _ProfileTabState extends State<ProfileTab> {
     final reminder = s.reminderMinutes >= 0
         ? '${(s.reminderMinutes ~/ 60).toString().padLeft(2, '0')}:${(s.reminderMinutes % 60).toString().padLeft(2, '0')}'
         : s.t('off');
+    final desk = isWide(context);
     final learning = GroupList([
       GroupRow(
           icon: Icons.military_tech_rounded,
@@ -129,6 +130,7 @@ class _ProfileTabState extends State<ProfileTab> {
           title: s.t('league'),
           value: s.leagueName,
           onTap: () => s.go('ranking')),
+      if (!desk)
       GroupRow(
           key: const ValueKey('row-shop'),
           icon: Icons.redeem_rounded,
@@ -136,6 +138,7 @@ class _ProfileTabState extends State<ProfileTab> {
           title: s.t('shop_title'),
           value: '${st.xp} XP',
           onTap: () => s.go('shop')),
+      if (!desk)
       GroupRow(
           key: const ValueKey('cards-tile'),
           icon: Icons.bookmarks_rounded,
@@ -150,6 +153,7 @@ class _ProfileTabState extends State<ProfileTab> {
           title: s.t('my_certs'),
           value: '${s.certs.length}',
           onTap: () => openCertificates(context)),
+      if (!desk)
       GroupRow(
           key: const ValueKey('row-play'),
           icon: Icons.terminal_rounded,
@@ -232,7 +236,7 @@ class _ProfileTabState extends State<ProfileTab> {
       children: [
         head,
         if (!s.isStaff) ...[stats, learning],
-        settings,
+        if (!desk) settings,
         legal,
         account,
       ],

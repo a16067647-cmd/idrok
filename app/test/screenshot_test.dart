@@ -325,8 +325,8 @@ void main() {
     await settle(t, 1200);
     await shot(t, 'desk-1-admin-dash');
     state.user = null;
-    for (final tab in ['home', 'courses', 'play', 'ranking', 'profile', 'shop']) {
-      state.go(tab);
+    for (final tab in ['home', 'courses', 'play', 'ranking', 'profile', 'shop', 'cards']) {
+      state.openSide(tab);
       await settle(t, 1500);
       await shot(t, 'desk-2-$tab');
     }
@@ -334,6 +334,13 @@ void main() {
     state.go('home');
     await settle(t, 1500);
     await shot(t, 'desk-3-home-dark');
+    state.toggleSide();
+    await settle(t, 900);
+    await shot(t, 'desk-4-collapsed');
+    state.toggleSide();
+    state.openSide('profile');
+    await settle(t, 1200);
+    await shot(t, 'desk-5-profile-dark');
     await t.pump(const Duration(seconds: 4));
   }, skip: _dir == null);
 }

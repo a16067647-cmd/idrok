@@ -991,6 +991,20 @@ class AppState extends ChangeNotifier {
     nav.push(AppRoute<void>(builder: (_) => PageShell(child: pageBuilder!(name))));
   }
 
+  /// Kompyuterda yon menyu ochiqmi / открыто ли боковое меню на компьютере.
+  bool sideOpen = true;
+  void toggleSide() {
+    sideOpen = !sideOpen;
+    notifyListeners();
+  }
+
+  /// Kompyuterda sahifani asosiy maydonda ochish / открыть страницу в основной области (компьютер).
+  void openSide(String id) {
+    navigatorKey.currentState?.popUntil((r) => r.isFirst);
+    tab = id;
+    notifyListeners();
+  }
+
   void setTheme(String m) {
     theme = const ['system', 'light', 'dark'].contains(m) ? m : 'system';
     savePrefs();
