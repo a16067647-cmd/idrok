@@ -678,7 +678,7 @@ final Map<String, CyScene> kCyScenes = {
           ('', _e('th', 'Login | Saqlangan', 0), const Tr('Bazadagi jadval.', 'Таблица в базе.')),
           ('❌ ochiq matn', _e('tr', 'ali | Olma123', 1), const Tr('Yomon: baza o‘g‘irlansa — parol ochiq!', 'Плохо: украдут базу — пароль открыт!')),
           ('❌ tuzsiz xesh', _e('tr', 'vali | 5f4dcc3b…', 2), const Tr('Yaxshiroq, lekin bir xil parol — bir xil xesh.', 'Лучше, но одинаковый пароль — одинаковый хеш.')),
-          ('✅ tuz + xesh', _e('tr', 'aziz | 9c1e…$a8f2', 3), const Tr('To‘g‘ri: har kimga tasodifiy tuz + xesh.', 'Правильно: случайная соль + хеш для каждого.')),
+          ('✅ tuz + xesh', _e('tr', 'aziz | 9c1e…:a8f2', 3), const Tr('To‘g‘ri: har kimga tasodifiy tuz + xesh.', 'Правильно: случайная соль + хеш для каждого.')),
         ])),
   'cy11': (const Tr('“KOD” ni shifrlaymiz', 'Шифруем «KOD»'), _watch, (g) {
         final t = Tracer('py', ['natija = ""', 'for h in "KOD":', '    n = (ord(h) - 65 + 1) % 26', '    natija += chr(n + 65)', 'print(natija)'])
