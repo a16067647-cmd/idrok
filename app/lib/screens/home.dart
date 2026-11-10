@@ -557,13 +557,8 @@ class _CourseTile extends StatelessWidget {
           padding: const EdgeInsets.all(S.x4),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              // piksel-art belgi / пиксель-арт значок
-              Floaty(
-                amount: 3,
-                phase: index * 0.21,
-                period: Duration(milliseconds: 3600 + index * 300),
-                child: CoursePixel(co, size: 48),
-              ),
+              // piksel-art belgi (qimirlamaydi — chetlari o‘tkir qoladi) / пиксель-арт значок (неподвижен — края чёткие)
+              CoursePixel(co, size: 48),
               const Spacer(),
               if (badge != null) badge,
             ]),
