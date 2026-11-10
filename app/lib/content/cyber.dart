@@ -44,7 +44,11 @@ List<LessonStep> cy1(Gen g) => [
             e: const Tr('Shuning uchun xavfsizlik — avvalo odatlar.', 'Поэтому безопасность — прежде всего привычки.'))),
         Q(3, (g) => g.quiz(const Tr('Zaxira nusxa (backup) qaysi maqsadga xizmat qiladi?', 'Какой цели служит резервная копия (бэкап)?'), const Tr('Mavjudlik — fayl yo‘qolsa ham tiklanadi', 'Доступность — даже при потере файл восстановится'),
             const [Tr('Faqat tezlikka', 'Только скорости'), Tr('Hech qaysiga', 'Никакой'), Tr('Faqat dizaynga', 'Только дизайну')])),
-      ], 3),
+        Q(1, (g) => g.quiz(const Tr('Kiberxavfsizlik nimani himoya qiladi?', 'Что защищает кибербезопасность?'), const Tr('Ma’lumot, qurilma va odamlarni', 'Данные, устройства и людей'),
+            const [Tr('Faqat monitorni', 'Только монитор'), Tr('Faqat internet kabelini', 'Только интернет-кабель'), Tr('Hech narsani', 'Ничего')])),
+        Q(2, (g) => g.quiz(const Tr('CIA qisqartmasidagi “A” nima?', 'Что значит «A» в CIA?'), const Tr('Availability — mavjudlik', 'Availability — доступность'),
+            const [Tr('Antivirus', 'Антивирус'), Tr('Admin', 'Админ'), Tr('Akkaunt', 'Аккаунт')])),
+], 3),
       g.order(const Tr('Xavfsizlik qoidasi — tartiblang:', 'Правило безопасности — упорядочьте:'), ['Xavfni ko‘rish', 'Himoyani o‘ylash', 'Himoyani qo‘yish', 'Tekshirib turish']),
     ];
 
@@ -77,7 +81,11 @@ List<LessonStep> cy2(Gen g) {
           const [Tr('Monitorga yopishtirilgan qog‘oz', 'Бумажка на мониторе'), Tr('Telefon zametkasi “parollar”', 'Заметка «пароли» в телефоне'), Tr('Hammasi bir xil', 'Все одинаковые')])),
       Q(3, (g) => g.quiz(const Tr('Nega uzun parol qisqasidan kuchliroq?', 'Почему длинный пароль надёжнее короткого?'), const Tr('Variantlar soni juda tez o‘sadi', 'Число вариантов растёт очень быстро'),
           const [Tr('Chiroyliroq ko‘rinadi', 'Красивее выглядит'), Tr('Tezroq yoziladi', 'Быстрее печатается'), Tr('Farqi yo‘q', 'Разницы нет')])),
-    ], 3),
+            Q(1, (g) => g.quiz(const Tr('Parolni kimga aytish mumkin?', 'Кому можно сказать пароль?'), const Tr('Hech kimga', 'Никому'),
+            const [Tr('Eng yaqin do‘stga', 'Лучшему другу'), Tr('“Admin”ga', '«Админу»'), Tr('Sinfdoshga', 'Однокласснику')])),
+        Q(2, (g) => g.quiz(const Tr('Parol kamida necha belgi bo‘lgani yaxshi?', 'Сколько символов минимум лучше в пароле?'), const Tr('12 va undan ko‘p', '12 и больше'),
+            const [Tr('4', '4'), Tr('6', '6'), Tr('Farqi yo‘q', 'Без разницы')])),
+], 3),
     g.order(const Tr('2FA yoqish:', 'Включить 2FA:'), ['Sozlamalar', 'Xavfsizlik', '2FA ni yoqish', 'Telefon kodini kiritish']),
   ];
 }
@@ -110,7 +118,11 @@ List<LessonStep> cy3(Gen g) => [
         Q(3, (g) => g.quiz(const Tr('Fishingga ilindingiz (parol yozib qo‘ydingiz). Birinchi qadam:', 'Попались на фишинг (ввели пароль). Первый шаг:'),
             const Tr('Darhol parolni almashtirish va 2FA yoqish', 'Сразу сменить пароль и включить 2FA'),
             const [Tr('Hech kimga aytmaslik', 'Никому не говорить'), Tr('Kutish', 'Подождать'), Tr('Telefonni sotish', 'Продать телефон')])),
-      ], 3),
+        Q(1, (g) => g.quiz(const Tr('Fishingning maqsadi:', 'Цель фишинга:'), const Tr('Parol, karta yoki kodni o‘g‘irlash', 'Украсть пароль, карту или код'),
+            const [Tr('Sovg‘a berish', 'Подарить подарок'), Tr('Dars o‘rgatish', 'Научить уроку'), Tr('Internetni tezlatish', 'Ускорить интернет')])),
+        Q(2, (g) => g.quiz(const Tr('Qaysi xabar ko‘proq fishingga o‘xshaydi?', 'Какое сообщение больше похоже на фишинг?'), const Tr('“Tabriklaymiz! 1 000 000 so‘m yutdingiz, karta raqamingizni yozing”', '«Поздравляем! Вы выиграли 1 000 000 сумов, напишите номер карты»'),
+            const [Tr('“Ertaga dars soat 9 da”', '«Завтра урок в 9»'), Tr('“Uy vazifasi: 5-mashq”', '«Домашнее задание: упражнение 5»'), Tr('“Tug‘ilgan kuning bilan!”', '«С днём рождения!»')])),
+], 3),
       g.order(const Tr('Shubhali xabar kelsa:', 'Пришло подозрительное сообщение:'), ['To‘xtash', 'Manzilni tekshirish', 'Rasmiy yo‘l bilan aniqlash', 'Spam deb belgilash']),
     ];
 
@@ -140,7 +152,11 @@ List<LessonStep> cy4(Gen g) => [
         Q(3, (g) => g.quiz(const Tr('Begona odam onlayn o‘yinda maktabingiz va manzilingizni so‘rayapti:', 'Незнакомец в онлайн-игре спрашивает школу и адрес:'),
             const Tr('Aytmayman, bloklayman, kattalarga xabar beraman', 'Не говорю, блокирую, сообщаю взрослым'),
             const [Tr('Aytaman, u do‘st-ku', 'Скажу, он же друг'), Tr('Faqat maktabni aytaman', 'Скажу только школу'), Tr('Rasm yuboraman', 'Отправлю фото')])),
-      ], 3),
+        Q(1, (g) => g.quiz(const Tr('Internetga joylangan rasmni to‘liq o‘chirib bo‘ladimi?', 'Можно ли полностью удалить фото из интернета?'), const Tr('Ko‘pincha yo‘q — kimdir saqlab qolgan bo‘lishi mumkin', 'Чаще нет — кто-то мог сохранить'),
+            const [Tr('Ha, har doim', 'Да, всегда'), Tr('Ha, ertasi kuni', 'Да, на следующий день'), Tr('Faqat kechasi', 'Только ночью')])),
+        Q(2, (g) => g.quiz(const Tr('Profilni “yopiq” qilish nima beradi?', 'Что даёт «закрытый» профиль?'), const Tr('Postlarni faqat siz ruxsat berganlar ko‘radi', 'Посты видят только те, кому вы разрешили'),
+            const [Tr('Profil o‘chadi', 'Профиль удалится'), Tr('Telefon tezlashadi', 'Телефон ускорится'), Tr('Hech narsa', 'Ничего')])),
+], 3),
       g.order(const Tr('Akkauntni himoyalash:', 'Защита аккаунта:'), ['Profilni yopiq qilish', 'Kuchli parol', '2FA yoqish', 'Ruxsatlarni tekshirish']),
     ];
 
@@ -169,7 +185,11 @@ List<LessonStep> cy5(Gen g) => [
             const [Tr('Ekran yorqinligi', 'Яркость экрана'), Tr('Chiroyli fon rasmi', 'Красивые обои'), Tr('Ko‘p ilova', 'Много приложений')])),
         Q(3, (g) => g.quiz(const Tr('Telefoningiz yo‘qoldi. Birinchi navbatda:', 'Потерялся телефон. В первую очередь:'), const Tr('“Qurilmani topish” orqali qulflash va parollarni almashtirish', 'Заблокировать через «Найти устройство» и сменить пароли'),
             const [Tr('Hech narsa qilmaslik', 'Ничего не делать'), Tr('Yangi o‘yin o‘rnatish', 'Установить новую игру'), Tr('Faqat kutish', 'Только ждать')])),
-      ], 3),
+        Q(1, (g) => g.quiz(const Tr('Ekran qulfi nima uchun kerak?', 'Зачем блокировка экрана?'), const Tr('Telefon yo‘qolsa, begona ichiga kira olmasligi uchun', 'Чтобы чужой не вошёл, если телефон потерян'),
+            const [Tr('Chiroy uchun', 'Для красоты'), Tr('Batareya uchun', 'Для батареи'), Tr('Kerak emas', 'Не нужна')])),
+        Q(2, (g) => g.quiz(const Tr('Antivirus nima qiladi?', 'Что делает антивирус?'), const Tr('Zararli dasturlarni topadi va to‘xtatadi', 'Находит и останавливает вредоносные программы'),
+            const [Tr('Internetni tekin qiladi', 'Делает интернет бесплатным'), Tr('Parol yaratadi', 'Создаёт пароли'), Tr('O‘yin o‘rnatadi', 'Ставит игры')])),
+], 3),
       g.order(const Tr('Yangi telefon sozlash:', 'Настройка нового телефона:'), ['Ekran qulfi', 'Yangilanishlar', 'Rasmiy ilovalar', 'Zaxira nusxa']),
     ];
 
@@ -198,7 +218,7 @@ List<LessonStep> cy6(Gen g) => [
             const [Tr('Bitta katta fayl bo‘lib', 'Одним большим файлом'), Tr('Faqat sun’iy yo‘ldosh orqali', 'Только через спутник'), Tr('Pochta orqali', 'Почтой')])),
         Q(3, (g) => g.quiz(const Tr('192.168.x.x qanday manzil?', 'Что за адрес 192.168.x.x?'), const Tr('Ichki (lokal) tarmoq', 'Внутренняя (локальная) сеть'),
             const [Tr('Google serveri', 'Сервер Google'), Tr('Har doim xavfli', 'Всегда опасный'), Tr('Sun’iy yo‘ldosh', 'Спутник')])),
-      ], 3),
+], 3),
       g.order(const Tr('Saytga kirganda nima bo‘ladi:', 'Что происходит при заходе на сайт:'), ['Nom yoziladi', 'DNS IP ni topadi', 'Ulanish 443 portga', 'Sahifa keladi']),
     ];
 
@@ -257,7 +277,7 @@ List<LessonStep> cy8(Gen g) => [
         Q(3, (g) => g.quiz(const Tr('Brauzer “Ulanish xavfsiz emas, sertifikat xato” dedi. Nima qilasiz?', 'Браузер пишет «Подключение не защищено, ошибка сертификата». Что делать?'),
             const Tr('Saytga kirmayman, ayniqsa parol yozmayman', 'Не захожу, тем более не ввожу пароль'),
             const [Tr('“Baribir davom etish”', '«Всё равно продолжить»'), Tr('Parolni yozib ko‘raman', 'Попробую ввести пароль'), Tr('Antivirusni o‘chiraman', 'Выключу антивирус')])),
-      ], 3),
+], 3),
       g.order(const Tr('Saytga ishonishdan oldin:', 'Прежде чем доверять сайту:'), ['Domenni o‘qish', '🔒 ni ko‘rish', 'Imloni tekshirish', 'Rasmiy manbadan solishtirish']),
     ];
 
@@ -283,7 +303,7 @@ List<LessonStep> cy9(Gen g) => [
         Q(3, (g) => g.quiz(const Tr('Kompyuter sekinlashdi, o‘zi reklama ochyapti, noma’lum dastur paydo bo‘ldi. Birinchi qadam:', 'Компьютер тормозит, сам открывает рекламу, появилась неизвестная программа. Первый шаг:'),
             const Tr('Internetdan uzish va antivirus bilan tekshirish', 'Отключить интернет и проверить антивирусом'),
             const [Tr('Parollarni shu kompyuterda yozish', 'Вводить пароли на этом компьютере'), Tr('E’tibor bermaslik', 'Не обращать внимания'), Tr('Ko‘proq ilova o‘rnatish', 'Поставить больше программ')])),
-      ], 3),
+], 3),
       g.order(const Tr('Zararlanganda tiklanish:', 'Восстановление после заражения:'), ['Internetdan uzish', 'Antivirus bilan tozalash', 'Parollarni almashtirish', 'Zaxiradan tiklash']),
     ];
 
@@ -309,7 +329,7 @@ List<LessonStep> cy10(Gen g) => [
         Q(3, (g) => g.quiz(const Tr('Yuklab olingan fayl xeshi rasmiy saytdagidan farq qildi. Bu nimani bildiradi?', 'Хеш скачанного файла отличается от указанного на сайте. Что это значит?'),
             const Tr('Fayl o‘zgartirilgan yoki buzilgan — ishlatmang', 'Файл изменён или повреждён — не используйте'),
             const [Tr('Hammasi joyida', 'Всё в порядке'), Tr('Fayl yangiroq', 'Файл новее'), Tr('Internet tez', 'Интернет быстрый')])),
-      ], 3),
+], 3),
       g.order(const Tr('Ro‘yxatdan o‘tishda parol:', 'Пароль при регистрации:'), ['Parol kiritiladi', 'Tasodifiy tuz qo‘shiladi', 'Xesh hisoblanadi', 'Faqat xesh saqlanadi']),
     ];
 
@@ -393,7 +413,7 @@ List<LessonStep> cy13(Gen g) => [
             const [Tr('Hammaga admin huquq', 'Всем права админа'), Tr('Parolsiz baza', 'База без пароля'), Tr('Bitta jadval', 'Одна таблица')])),
         Q(3, (g) => g.quiz(const Tr('Saytda zaiflik topdingiz. Axloqiy yo‘l:', 'Нашли уязвимость на сайте. Этичный путь:'), const Tr('Egasiga yashirin xabar berish (responsible disclosure)', 'Тихо сообщить владельцу (responsible disclosure)'),
             const [Tr('Ma’lumotlarni yuklab olish', 'Скачать данные'), Tr('Ijtimoiy tarmoqda e’lon qilish', 'Опубликовать в соцсетях'), Tr('Do‘stlarga o‘rgatish', 'Научить друзей')])),
-      ], 3),
+], 3),
       g.order(const Tr('Xavfsiz so‘rov yozish:', 'Безопасный запрос:'), ['Ma’lumotni tekshirish', 'SQL’da ? qo‘yish', 'Ma’lumotni alohida berish', 'Natijani qaytarish']),
     ];
 
@@ -418,7 +438,7 @@ List<LessonStep> cy14(Gen g) => [
             const [Tr('Hamma ma’lumot xavfsiz', 'Все данные безопасны'), Tr('Faqat parolni tekshiring', 'Проверяйте только пароль'), Tr('Ekranlash sekin, kerak emas', 'Экранирование медленное, не нужно')])),
         Q(3, (g) => g.quiz(const Tr('CSP sarlavhasi nima qiladi?', 'Что делает заголовок CSP?'), const Tr('Sahifada qaysi skriptlar ishlashi mumkinligini cheklaydi', 'Ограничивает, какие скрипты могут работать на странице'),
             const [Tr('Rangni o‘zgartiradi', 'Меняет цвет'), Tr('Parol saqlaydi', 'Хранит пароль'), Tr('Saytni tezlatadi', 'Ускоряет сайт')])),
-      ], 3),
+], 3),
       g.fill(const Tr('> belgisi ekranlansa:', 'Символ > после экранирования:'), '', '', ['&gt;']),
     ];
 
@@ -475,7 +495,7 @@ List<LessonStep> cy16(Gen g) => [
             const [Tr('Zerikish', 'Скука'), Tr('Ochlik', 'Голод'), Tr('Uyqu', 'Сон')])),
         Q(3, (g) => g.quiz(const Tr('Eng kuchli himoya:', 'Самая сильная защита:'), const Tr('Ta’lim va “avval tasdiqla” odati', 'Обучение и привычка «сначала проверь»'),
             const [Tr('Qimmat kompyuter', 'Дорогой компьютер'), Tr('Hech kimga ishonmaslik va gapirmaslik', 'Никому не верить и ни с кем не говорить'), Tr('Faqat antivirus', 'Только антивирус')])),
-      ], 3),
+], 3),
       g.order(const Tr('Shubhali iltimosga javob:', 'Ответ на подозрительную просьбу:'), ['To‘xtash', 'Kim ekanini tasdiqlash', 'Qoidani eslash', 'Rad etish yoki xabar berish']),
     ];
 
@@ -502,7 +522,7 @@ List<LessonStep> cy17(Gen g) => [
             const [Tr('Hammaga to‘liq ishonish', 'Полностью доверять всем'), Tr('Parolsiz ishlash', 'Работать без паролей'), Tr('Tarmoqni o‘chirish', 'Отключить сеть')])),
         Q(3, (g) => g.quiz(const Tr('VPN nimadan himoya qilmaydi?', 'От чего VPN НЕ защищает?'), const Tr('Fishing saytga o‘zingiz parol yozishdan', 'От того, что вы сами введёте пароль на фишинговом сайте'),
             const [Tr('Ommaviy Wi-Fi’da kuzatishdan', 'От слежки в публичном Wi-Fi'), Tr('Provayder ko‘rishidan', 'От того, что видит провайдер'), Tr('Ochiq trafikdan', 'От открытого трафика')])),
-      ], 3),
+], 3),
       g.order(const Tr('Maktab tarmog‘ini himoyalash qatlamlari:', 'Слои защиты школьной сети:'), ['Firewall', 'Yangilanishlar', 'Minimal huquqlar', 'Loglarni kuzatish', 'O‘quvchilarni o‘qitish']),
     ];
 
@@ -530,7 +550,7 @@ List<LessonStep> cy18(Gen g) => [
             const [Tr('Yashirincha buzadi', 'Тайно взламывает'), Tr('Faqat kompyuter sotadi', 'Только продаёт компьютеры'), Tr('Dizayn qiladi', 'Делает дизайн')])),
         Q(3, (g) => g.quiz(const Tr('“Oq” va “qora” xakerni ajratadigan asosiy narsa:', 'Главное, что отличает «белого» хакера от «чёрного»:'), const Tr('Ruxsat va niyat', 'Разрешение и намерение'),
             const [Tr('Kompyuter rangi', 'Цвет компьютера'), Tr('Bilim darajasi', 'Уровень знаний'), Tr('Yoshi', 'Возраст')])),
-      ], 3),
+], 3),
       g.order(const Tr('Kiberxavfsizlik mutaxassisi yo‘li:', 'Путь специалиста по кибербезопасности:'), ['Asoslar (tarmoq, OS)', 'Dasturlash (Python)', 'Xavfsizlik nazariyasi', 'CTF va laboratoriya', 'Sertifikat va ish']),
     ];
 
