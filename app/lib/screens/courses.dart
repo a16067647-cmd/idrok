@@ -22,7 +22,9 @@ class CoursesTab extends StatelessWidget {
     return TabPage(
       title: s.t('courses'),
       split: 4,
-      children: [
+      children: s.courseLocked(course)
+          ? [const _CoursePicker(), LockedCourseCard(course: course)]
+          : [
         const _CoursePicker(),
         _CourseHero(course: course),
         SectionHeader(s.t('course_path')),
@@ -33,6 +35,67 @@ class CoursesTab extends StatelessWidget {
         ProjectCard(course: course),
         const SchoolTestsSection(),
       ],
+    );
+  }
+}
+
+/// Qulflangan yakuniy kurs kartasi / карточка закрытого финального курса.
+class LockedCourseCard extends StatelessWidget {
+  final Course course;
+  const LockedCourseCard({super.key, required this.course});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = AppScope.of(context);
+    final c = s.c;
+    final master = s.st.league == 'master';
+    Widget row(bool ok, String text, [String? trail]) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Row(children: [
+            Icon(ok ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                size: 20, color: ok ? const Color(0xFF34C759) : kWhite.withAlpha(0x88)),
+            const SizedBox(width: S.x3),
+            Expanded(child: Text(text, style: AppType.subhead.copyWith(color: kWhite))),
+            if (trail != null) Text(trail, style: AppType.caption.copyWith(color: kWhite.withAlpha(0xCC), fontWeight: w7)),
+          ]),
+        );
+    return Container(
+      key: const ValueKey('course-locked'),
+      padding: const EdgeInsets.all(S.x5),
+      decoration: BoxDecoration(
+        borderRadius: R.all(R.xl),
+        gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF1E4D7B), Color(0xFF07101F)]),
+        boxShadow: Shadows.glow(const Color(0xFF1E4D7B), c, strength: 0.8),
+      ),
+      foregroundDecoration: BoxDecoration(gradient: kGloss, borderRadius: R.all(R.xl)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(color: const Color(0x26FFFFFF), borderRadius: R.all(R.lg), border: Border.all(color: const Color(0x40FFFFFF))),
+            child: const Icon(Icons.lock_rounded, color: Color(0xFFFFD54A), size: 30),
+          ),
+          const SizedBox(width: S.x4),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(s.tr(const Tr('YASHIRIN YAKUNIY KURS', 'СЕКРЕТНЫЙ ФИНАЛЬНЫЙ КУРС')),
+                  style: AppType.caption.copyWith(color: const Color(0xFFFFD54A), fontWeight: w8, letterSpacing: 1.1)),
+              Text(s.tr(course.name), style: AppType.title2.copyWith(color: kWhite)),
+            ]),
+          ),
+        ]),
+        const SizedBox(height: S.x3),
+        Text(
+            s.tr(const Tr('Eng kuchli o‘quvchilar uchun: shifrlash, xesh, tarmoq, SQL injection va XSS’dan himoya, CTF. Ochish shartlari:',
+                'Для самых сильных учеников: шифрование, хеши, сети, защита от SQL-инъекций и XSS, CTF. Условия открытия:')),
+            style: AppType.subhead.copyWith(color: kWhite.withAlpha(0xD9))),
+        const SizedBox(height: S.x3),
+        row(master, s.tr(const Tr('Ustalar ligasiga chiqish', 'Попасть в Мастер-лигу'))),
+        for (final co in kCourses.where((x) => x.id != course.id))
+          row(s.courseComplete(co), s.tr(Tr('“${co.name.uz}” kursini tugatish', 'Пройти курс «${co.name.ru}»')),
+              '${s.progressOf(co)}/${s.lessonsOf(co).length}'),
+      ]),
     );
   }
 }
@@ -66,7 +129,10 @@ class _CoursePicker extends StatelessWidget {
                 boxShadow: x.id == s.courseId ? Shadows.soft(c) : null,
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                CourseTag(x, size: 30, fontSize: 10.5),
+                if (s.courseLocked(x))
+                  Icon(Icons.lock_rounded, size: 22, color: c.text3)
+                else
+                  CourseTag(x, size: 30, fontSize: 10.5),
                 const SizedBox(width: S.x2),
                 Text(s.tr(x.name),
                     style: AppType.subhead.copyWith(

@@ -668,8 +668,11 @@ class _CourseTile extends StatelessWidget {
     final examReady = !s.isStaff && cert == null && s.courseComplete(co) && s.examWait(co) == Duration.zero;
     final white80 = kWhite.withAlpha(0xCC);
 
+    final locked = s.courseLocked(co);
     Widget? badge;
-    if (co.id == 'pc' && cert == null && s.league == 'beginner' && !s.isStaff) {
+    if (locked) {
+      badge = const Icon(Icons.lock_rounded, color: Color(0xFFFFD54A), size: 22, shadows: kTextShadow);
+    } else if (co.id == 'pc' && cert == null && s.league == 'beginner' && !s.isStaff) {
       // Boshlang‘ich liga uchun tavsiya / рекомендация для начальной лиги
       badge = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

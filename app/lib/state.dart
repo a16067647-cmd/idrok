@@ -177,7 +177,15 @@ class AppState extends ChangeNotifier {
   Course get course => kCourses.firstWhere((x) => x.id == courseId, orElse: () => kCourses.first);
   List<Lesson> lessonsOf(Course co) => co.lessonsFor(st.league);
   int progressOf(Course co) => lessonsOf(co).where((l) => st.isDone(l.id)).length;
+  /// Yashirin yakuniy kurs: Kiberxavfsizlik faqat Ustalar ligasida, qolgan barcha kurslar tugagach ochiladi.
+  /// Секретный финальный курс: Кибербезопасность открывается только в Мастер-лиге после всех остальных курсов.
+  static const String kFinalCourse = 'cy';
+  bool courseLocked(Course co) =>
+      co.id == kFinalCourse && !isStaff && !(st.league == 'master' && finalReady);
+  bool get finalReady => kCourses.where((c) => c.id != kFinalCourse).every(courseComplete);
+
   Lesson? nextLesson(Course co) {
+    if (courseLocked(co)) return null;
     for (final l in lessonsOf(co)) {
       if (!st.isDone(l.id)) return l;
     }
