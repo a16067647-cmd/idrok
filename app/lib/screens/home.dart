@@ -44,8 +44,9 @@ class HomeTab extends StatelessWidget {
     return TabPage(
       title: '${s.tr(greet)}${name.isNotEmpty ? ', $name' : ''} 👋',
       subtitle: s.leagueName,
-      split: 3,
+      split: 4,
       children: [
+        const _PlayerCard(),
         const _TodayCard(),
         _Continue(next: next),
         const _QuestStrip(),
@@ -53,6 +54,131 @@ class HomeTab extends StatelessWidget {
         const _CourseGrid(),
         const _TipCard(),
       ],
+    );
+  }
+}
+
+// ------------------------------------------------------------ o‘yinchi kartasi / карточка игрока
+class _PlayerCard extends StatelessWidget {
+  const _PlayerCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final s = AppScope.of(context);
+    final c = s.c, st = s.st;
+    final lvl = levelOf(st.xpTotal);
+    final inLvl = st.xpTotal % 100;
+    final done = st.done.length;
+    final certs = s.certs.length;
+    const gold = Color(0xFFFFD54A);
+    Widget chip(IconData icon, String v, String label, Color col) => Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: S.x2, horizontal: S.x2),
+            decoration: BoxDecoration(
+              color: const Color(0x26FFFFFF),
+              borderRadius: R.all(R.md),
+              border: Border.all(color: const Color(0x33FFFFFF)),
+            ),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Icon(icon, size: 18, color: col),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                  Text(v, style: AppType.headline.copyWith(color: kWhite, height: 1.1)),
+                  Text(label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppType.caption.copyWith(color: kWhite.withAlpha(0xCC))),
+                ]),
+              ),
+            ]),
+          ),
+        );
+    return Container(
+      key: const ValueKey('player-card'),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: R.all(R.xl),
+        gradient: c.accentGradient,
+        boxShadow: Shadows.glow(c.accent, c, strength: 0.8),
+      ),
+      foregroundDecoration: BoxDecoration(gradient: kGloss, borderRadius: R.all(R.xl)),
+      child: Stack(children: [
+        // suzuvchi belgilar / плавающие символы
+        for (final (i, t, x, y) in const [(0, '</>', 0.70, 0.08), (1, '{ }', 0.86, 0.46), (2, '#', 0.60, 0.62), (3, '★', 0.93, 0.10)])
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment(x * 2 - 1, y * 2 - 1),
+              child: Floaty(
+                amount: 6,
+                phase: i * 0.27,
+                period: Duration(milliseconds: 3200 + i * 400),
+                child: Text(t, style: AppType.monoStrong.copyWith(fontSize: 26, color: kWhite.withAlpha(0x2E))),
+              ),
+            ),
+          ),
+        Padding(
+          padding: const EdgeInsets.all(S.x4),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Row(children: [
+              // daraja nishoni / значок уровня
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                      begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFFFFE27A), Color(0xFFFFA81A)]),
+                  border: Border.all(color: kWhite, width: 3),
+                  boxShadow: const [BoxShadow(color: Color(0x55FFB300), blurRadius: 16, offset: Offset(0, 6))],
+                ),
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(s.tr(const Tr('DARAJA', 'УРОВЕНЬ')),
+                      style: AppType.caption.copyWith(color: const Color(0xFF6A4300), fontSize: 8, fontWeight: w8, letterSpacing: 0.6)),
+                  Text('$lvl', style: AppType.title2.copyWith(color: const Color(0xFF5A3A00), height: 1)),
+                ]),
+              ),
+              const SizedBox(width: S.x3),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(s.leagueName, style: AppType.headline.copyWith(color: kWhite)),
+                  const SizedBox(height: 2),
+                  Text(s.tr(Tr('Keyingi darajagacha ${100 - inLvl} XP', 'До следующего уровня ${100 - inLvl} XP')),
+                      style: AppType.caption.copyWith(color: kWhite.withAlpha(0xD9))),
+                  const SizedBox(height: S.x2),
+                  ClipRRect(
+                    borderRadius: R.all(R.pill),
+                    child: Stack(children: [
+                      Container(height: 12, color: const Color(0x33FFFFFF)),
+                      FractionallySizedBox(
+                        widthFactor: (inLvl / 100).clamp(0.04, 1.0),
+                        child: Container(
+                          height: 12,
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(colors: [Color(0xFFFFE27A), Color(0xFFFFB300)]),
+                          ),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ]),
+              ),
+              const SizedBox(width: S.x3),
+              LeagueBadge(league: s.league, size: 44),
+            ]),
+            const SizedBox(height: S.x4),
+            Row(children: [
+              chip(Icons.local_fire_department_rounded, '${st.streak}', s.t('streak'), const Color(0xFFFFA24A)),
+              const SizedBox(width: S.x2),
+              chip(Icons.bolt_rounded, '${st.xp}', 'XP', gold),
+              const SizedBox(width: S.x2),
+              chip(Icons.check_circle_rounded, '$done', s.t('lessons'), const Color(0xFF7CF5B0)),
+              const SizedBox(width: S.x2),
+              chip(Icons.emoji_events_rounded, '$certs', s.tr(const Tr('Kubok', 'Кубки')), gold),
+            ]),
+          ]),
+        ),
+      ]),
     );
   }
 }
@@ -242,7 +368,7 @@ class _QuestStrip extends StatelessWidget {
     final s = AppScope.of(context);
     final c = s.c, st = s.st;
     const colors = [Color(0xFFFFB800), Color(0xFF2EA6FF), Color(0xFFFF6A00)];
-    const labels = [Tr('XP', 'XP'), Tr('dars', 'урока'), Tr('ketma-ket', 'подряд')];
+    const labels = [Tr('XP bugun', 'XP сегодня'), Tr('dars bugun', 'урока сегодня'), Tr('to‘g‘ri javob ketma-ket', 'верных подряд')];
     return Pressable(
       key: const ValueKey('quests-row'),
       onTap: () => showAppSheet<void>(context, builder: (_) => const _Quests()),
@@ -589,8 +715,23 @@ class _CourseTile extends StatelessWidget {
                 if (badge != null) badge,
               ]),
               const Spacer(),
-              Text(s.tr(co.name),
-                  maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.headline.copyWith(color: kWhite, fontSize: 17)),
+              Text(s.tr(Tr('${index + 1}-OLAM', 'МИР ${index + 1}')),
+                  style: AppType.caption.copyWith(color: white80, fontWeight: w8, letterSpacing: 1.2, fontSize: 10)),
+              Row(children: [
+                Flexible(
+                  child: Text(s.tr(co.name),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppType.headline.copyWith(color: kWhite, fontSize: 17)),
+                ),
+                const SizedBox(width: S.x2),
+                // yulduzlar: 1/3, 2/3, hammasi / звёзды: 1/3, 2/3, всё
+                for (var k = 1; k <= 3; k++)
+                  Icon(Icons.star_rounded,
+                      size: 16,
+                      color: n > 0 && d * 3 >= n * k ? const Color(0xFFFFD54A) : const Color(0x40FFFFFF),
+                      shadows: n > 0 && d * 3 >= n * k ? kTextShadow : null),
+              ]),
               const SizedBox(height: 1),
               Text(s.tr(co.sub), maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.caption.copyWith(color: white80)),
               const SizedBox(height: S.x3),

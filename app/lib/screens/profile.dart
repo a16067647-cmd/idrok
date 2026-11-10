@@ -236,7 +236,6 @@ class _ProfileTabState extends State<ProfileTab> {
     ]);
 
     return TabPage(
-      split: s.isStaff ? 1 : 3,
       children: [
         head,
         if (!s.isStaff) ...[stats, learning],
