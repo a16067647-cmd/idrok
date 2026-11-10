@@ -84,7 +84,7 @@ class _AnimPlayerState extends State<AnimPlayer> {
     final last = frames.length - 1;
     final kindLabel = switch (sc.kind) {
       'trace' => sc.lang == 'js' ? 'JavaScript' : 'Python',
-      'render' => sc.lang == 'css' ? 'CSS' : 'HTML',
+      'render' => switch (sc.lang) { 'css' => 'CSS', 'word' => 'Word', 'excel' => 'Excel', 'ppt' => 'PowerPoint', _ => 'HTML' },
       'box' => 'CSS · box',
       'flex' => 'Flexbox',
       'learn' || 'grid' => 'AI',
@@ -526,7 +526,14 @@ class _RenderStage extends StatelessWidget {
     return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Expanded(
         child: _CodePanel(
-            code: scene.code, line: frame.line, label: scene.lang == 'css' ? 'style.css' : 'index.html', fontSize: 11),
+            code: scene.code, line: frame.line, label: switch (scene.lang) {
+              'css' => 'style.css',
+              'word' => 'hujjat.docx',
+              'excel' => 'jadval.xlsx',
+              'ppt' => 'taqdimot.pptx',
+              _ => 'index.html'
+            },
+            fontSize: 11),
       ),
       const SizedBox(width: S.x3),
       Column(children: [

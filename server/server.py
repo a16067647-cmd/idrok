@@ -426,8 +426,8 @@ EXAM_SIZE = 30
 EXAM_PASS = 70  # foiz / процент
 EXAM_WAIT = 24 * 3600  # qayta topshirish / пересдача
 EXAM_TIME = 3 * 3600  # bitta urinish uchun eng ko‘p vaqt / максимум на попытку
-COURSE_NAMES = {"html": "HTML", "css": "CSS", "js": "JavaScript", "py": "Python", "ai": "Sun’iy intellekt"}
-COURSE_NAMES_RU = {"html": "HTML", "css": "CSS", "js": "JavaScript", "py": "Python", "ai": "Искусственный интеллект"}
+COURSE_NAMES = {"pc": "Kompyuter savodxonligi", "html": "HTML", "css": "CSS", "js": "JavaScript", "py": "Python", "ai": "Sun’iy intellekt"}
+COURSE_NAMES_RU = {"pc": "Компьютерная грамотность", "html": "HTML", "css": "CSS", "js": "JavaScript", "py": "Python", "ai": "Искусственный интеллект"}
 
 
 def course_done(state, course):

@@ -59,7 +59,7 @@ void main() {
     });
 
     test('server content overrides, hides and adds lessons', () {
-      final html = kCourses.first;
+      final html = kCourses.firstWhere((c) => c.id == 'html');
       final before = [for (final l in html.lessons) l.id];
       applyContent([
         {

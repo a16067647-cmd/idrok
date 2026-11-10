@@ -623,6 +623,7 @@ class _ShineState extends State<_Shine> with SingleTickerProviderStateMixin {
 
 // ------------------------------------------------------------ rangli kurs kartalari / цветные карточки курсов
 const Map<String, List<Color>> kTileColors = {
+  'pc': [Color(0xFF3DDC97), Color(0xFF0E8F68)],
   'html': [Color(0xFF4DB0FF), Color(0xFF0A6CFF)],
   'css': [Color(0xFF4656FF), Color(0xFF0A1226)],
   'js': [Color(0xFF2CC4F7), Color(0xFF0A84D6)],
@@ -667,7 +668,14 @@ class _CourseTile extends StatelessWidget {
     final white80 = kWhite.withAlpha(0xCC);
 
     Widget? badge;
-    if (cert != null) {
+    if (co.id == 'pc' && cert == null && s.league == 'beginner' && !s.isStaff) {
+      // Boshlang‘ich liga uchun tavsiya / рекомендация для начальной лиги
+      badge = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(color: const Color(0x33FFFFFF), borderRadius: R.all(R.pill), border: Border.all(color: const Color(0x66FFFFFF))),
+        child: Text(s.tr(const Tr('Siz uchun ⭐', 'Для вас ⭐')), style: AppType.caption.copyWith(color: kWhite, fontWeight: w7)),
+      );
+    } else if (cert != null) {
       badge = const Icon(Icons.workspace_premium_rounded, color: Color(0xFFFFD54A), size: 22, shadows: kTextShadow);
     } else if (examReady) {
       badge = Container(

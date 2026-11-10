@@ -3,6 +3,7 @@
 import 'anim.dart';
 import 'model.dart';
 import 'more.dart' show kMoreScenes;
+import 'pc.dart' show kPcScenes;
 
 typedef SceneDef = (Tr h, Tr p, AnimScene Function(Gen g));
 
@@ -243,4 +244,5 @@ final Map<String, SceneDef> kScenes = {
         return t.scene();
       }),
   ...kMoreScenes,
+  ...kPcScenes,
 };

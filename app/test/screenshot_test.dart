@@ -234,7 +234,7 @@ void main() {
     await settle(t);
 
     // Yakuniy imtihon va sertifikat / итоговый экзамен и сертификат
-    for (final l in state.lessonsOf(kCourses.first)) {
+    for (final l in state.lessonsOf(kCourses.firstWhere((c) => c.id == 'html'))) {
       state.st.done[l.id] = true;
     }
     state.pickCourse('html');

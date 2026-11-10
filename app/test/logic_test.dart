@@ -272,7 +272,7 @@ void main() {
       'py': 'savollar = [("a", "1"), ("b", "2"), ("c", "3")]\nochko = 0\nfor s, j in savollar:\n    if input(s) == j:\n        ochko += 1\nprint(ochko)',
       'ai': 'javoblar = {"salom": "Salom!", "isming": "Bot"}\nwhile True:\n    gap = input().lower()\n    if gap == "xayr":\n        break\n    print(javoblar.get(gap, "?"))',
     };
-    for (final co in kCourses) {
+    for (final co in kCourses.where((c) => kProjects.containsKey(c.id))) {
       test('project for ${co.id}: starter fails, a real solution passes', () {
         final p = kProjects[co.id]!;
         expect(p.passes(p.starter), isFalse);

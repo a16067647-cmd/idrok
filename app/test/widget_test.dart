@@ -254,7 +254,7 @@ void main() {
 
     // 9) Yakuniy imtihon va sertifikat / итоговый экзамен и сертификат
     await tester.pump(const Duration(seconds: 4));
-    final html = kCourses.first;
+    final html = kCourses.firstWhere((c) => c.id == 'html');
     for (final l in state.lessonsOf(html)) {
       state.st.done[l.id] = true;
     }

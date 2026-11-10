@@ -216,7 +216,7 @@ AnimScene traceList(Gen g) {
 }
 
 // ============================================================ RENDER (HTML / CSS)
-AnimScene renderHtml(Tr intro, List<(String, RenderEl?, Tr)> lines) {
+AnimScene renderHtml(Tr intro, List<(String, RenderEl?, Tr)> lines, {String lang = 'html'}) {
   final els = [for (final l in lines) if (l.$2 != null) l.$2!];
   final frames = <AnimFrame>[AnimFrame(say: intro, reveal: 0)];
   var shown = 0;
@@ -224,7 +224,7 @@ AnimScene renderHtml(Tr intro, List<(String, RenderEl?, Tr)> lines) {
     if (lines[k].$2 != null) shown++;
     frames.add(AnimFrame(say: lines[k].$3, line: k, reveal: shown));
   }
-  return AnimScene(kind: 'render', lang: 'html', code: [for (final l in lines) l.$1], frames: frames, els: els);
+  return AnimScene(kind: 'render', lang: lang, code: [for (final l in lines) l.$1], frames: frames, els: els);
 }
 
 /// CSS: har qadamda maqsad → uslub (all | klass | #id) / CSS: на каждом шаге цель → стиль.

@@ -1,4 +1,49 @@
 {
+ "pc1": {
+  "course": "pc",
+  "xp": 20,
+  "leagues": null
+ },
+ "pc2": {
+  "course": "pc",
+  "xp": 20,
+  "leagues": null
+ },
+ "pc3": {
+  "course": "pc",
+  "xp": 20,
+  "leagues": null
+ },
+ "pc4": {
+  "course": "pc",
+  "xp": 20,
+  "leagues": null
+ },
+ "pc5": {
+  "course": "pc",
+  "xp": 20,
+  "leagues": null
+ },
+ "pc6": {
+  "course": "pc",
+  "xp": 20,
+  "leagues": null
+ },
+ "pc7": {
+  "course": "pc",
+  "xp": 20,
+  "leagues": null
+ },
+ "pc8": {
+  "course": "pc",
+  "xp": 20,
+  "leagues": null
+ },
+ "pc9": {
+  "course": "pc",
+  "xp": 20,
+  "leagues": null
+ },
  "html1": {
   "course": "html",
   "xp": 20,

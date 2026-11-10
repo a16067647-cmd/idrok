@@ -8,6 +8,7 @@ import 'html.dart';
 import 'js.dart';
 import 'model.dart';
 import 'more.dart';
+import 'pc.dart';
 import 'python.dart';
 import 'scenes.dart';
 
@@ -32,6 +33,20 @@ StepBuilder _withScene(String id, StepBuilder b) {
 }
 
 final List<Course> kCourses = [
+  // Kompyuter savodxonligi — boshlang‘ich liga uchun tavsiya, majburiy emas.
+  // Компьютерная грамотность — рекомендуется начальной лиге, не обязательно.
+  Course(id: 'pc', tag: 'PC', color: '#13B07B', name: const Tr('Kompyuter savodxonligi', 'Компьютерная грамотность'),
+      sub: const Tr('Word, Excel, PowerPoint', 'Word, Excel, PowerPoint'), lessons: [
+    _l('pc1', 'pc', const Tr('Fayl va papkalar', 'Файлы и папки'), pc1),
+    _l('pc2', 'pc', const Tr('Tezkor tugmalar', 'Горячие клавиши'), pc2),
+    _l('pc3', 'pc', const Tr('Word: matnni bezash', 'Word: оформление текста'), pc3),
+    _l('pc4', 'pc', const Tr('Word: hujjat tuzilishi', 'Word: структура документа'), pc4),
+    _l('pc5', 'pc', const Tr('Excel: kataklar', 'Excel: ячейки'), pc5),
+    _l('pc6', 'pc', const Tr('Excel: formulalar', 'Excel: формулы'), pc6),
+    _l('pc7', 'pc', const Tr('PowerPoint: slaydlar', 'PowerPoint: слайды'), pc7),
+    _l('pc8', 'pc', const Tr('Ajoyib taqdimot', 'Отличная презентация'), pc8),
+    _l('pc9', 'pc', const Tr('Internet va xavfsizlik', 'Интернет и безопасность'), pc9),
+  ]),
   Course(id: 'html', tag: '</>', color: '#0A6CFF', name: const Tr('HTML', 'HTML'),
       sub: const Tr('Veb-sahifa tuzilishi', 'Структура веб-страницы'), lessons: [
     _l('html1', 'html', const Tr('HTML nima?', 'Что такое HTML?'), html1),
