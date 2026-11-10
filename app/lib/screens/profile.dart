@@ -108,16 +108,20 @@ class _ProfileTabState extends State<ProfileTab> {
             Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.caption.copyWith(color: c.text2)),
           ]),
         );
-    final stats = Container(
-      padding: const EdgeInsets.symmetric(vertical: S.x4),
-      decoration: BoxDecoration(color: c.surface, borderRadius: R.all(R.lg)),
-      child: Row(children: [
+    final statRow = Row(children: [
         stat('${levelOf(st.xpTotal)}', s.t('level')),
         stat('${st.xp}', 'XP'),
         stat('${st.streak}', s.t('streak')),
         stat('${st.done.length}', s.t('lessons')),
-      ]),
-    );
+      ]);
+    // Kompyuterda shisha / на компьютере стекло
+    final Widget stats = isWide(context)
+        ? Glass(radius: R.lg, blur: 20, padding: const EdgeInsets.symmetric(vertical: S.x4), child: statRow)
+        : Container(
+            padding: const EdgeInsets.symmetric(vertical: S.x4),
+            decoration: BoxDecoration(color: c.surface, borderRadius: R.all(R.lg)),
+            child: statRow,
+          );
 
     final reminder = s.reminderMinutes >= 0
         ? '${(s.reminderMinutes ~/ 60).toString().padLeft(2, '0')}:${(s.reminderMinutes % 60).toString().padLeft(2, '0')}'

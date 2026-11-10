@@ -1719,6 +1719,14 @@ class GroupList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = colorsOf(context);
+    final col = Column(children: [
+      for (var i = 0; i < rows.length; i++) ...[
+        if (i > 0) Divider(height: 1, thickness: 0.5, indent: 58, color: c.hairlineStrong),
+        rows[i],
+      ],
+    ]);
+    // Kompyuterda: shisha (iOS) / на компьютере: стекло (iOS)
+    if (isWide(context)) return Glass(radius: R.lg, blur: 20, child: col);
     return Container(
       decoration: BoxDecoration(
         color: c.surface,
@@ -1726,12 +1734,7 @@ class GroupList extends StatelessWidget {
         border: c.isDark ? Border.all(color: c.hairline) : null,
       ),
       clipBehavior: Clip.antiAlias,
-      child: Column(children: [
-        for (var i = 0; i < rows.length; i++) ...[
-          if (i > 0) Divider(height: 1, thickness: 0.5, indent: 58, color: c.hairlineStrong),
-          rows[i],
-        ],
-      ]),
+      child: col,
     );
   }
 }
@@ -1791,6 +1794,14 @@ class GroupRow extends StatelessWidget {
 
 /// Tab sahifasi: sarlavha qatori + katta sarlavha + bo‘limlar.
 /// Страница вкладки: шапка + большой заголовок + секции.
+/// iOS yaltiroq qatlami (yuqori yarmida oq nur) / глянцевый блик iOS (свет в верхней половине).
+const kGloss = LinearGradient(
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
+  colors: [Color(0x38FFFFFF), Color(0x0AFFFFFF), Color(0x00FFFFFF)],
+  stops: [0, 0.5, 0.51],
+);
+
 /// Keng ekran (kompyuter) chegarasi / порог широкого экрана (компьютер).
 const double kWideBreak = 1000;
 bool isWide(BuildContext context) => MediaQuery.sizeOf(context).width >= kWideBreak;
@@ -1912,6 +1923,7 @@ class _SideItemState extends State<SideItem> {
             borderRadius: R.all(R.md),
             boxShadow: sel ? Shadows.glow(c.accent, c, strength: 0.7) : null,
           ),
+          foregroundDecoration: sel ? BoxDecoration(gradient: kGloss, borderRadius: R.all(R.md)) : null,
           child: widget.collapsed
               ? Tooltip(
                   message: widget.label,

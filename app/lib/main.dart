@@ -381,15 +381,12 @@ class _DeskNav extends StatelessWidget {
       curve: Curves.easeOutCubic,
       width: open ? 256 : 84,
       margin: const EdgeInsets.all(S.x4),
-      padding: const EdgeInsets.symmetric(horizontal: S.x3, vertical: S.x4),
-      decoration: BoxDecoration(
-        color: c.surface,
-        borderRadius: R.all(R.xxl),
-        border: Border.all(color: c.hairline),
-        boxShadow: Shadows.card(c),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      // Shisha (iOS) / стекло (iOS)
+      child: Glass(
+        radius: R.xxl,
+        blur: 30,
+        padding: const EdgeInsets.symmetric(horizontal: S.x3, vertical: S.x4),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         // Logotip va yig‘ish tugmasi / логотип и кнопка сворачивания
         SizedBox(
           height: 44,
@@ -453,7 +450,8 @@ class _DeskNav extends StatelessWidget {
         ),
         const SizedBox(height: S.x3),
         _ProfileCard(selected: tab == 'profile', collapsed: !open, onTap: () => go('profile')),
-      ]),
+        ]),
+      ),
     );
   }
 }
@@ -492,7 +490,9 @@ class _NavIconBtn extends StatelessWidget {
           child: Container(
             width: 38,
             height: 38,
-            decoration: BoxDecoration(color: c.surfaceAlt, borderRadius: R.all(R.md)),
+            decoration: BoxDecoration(
+                color: c.glass, borderRadius: R.all(R.md), border: Border.all(color: c.glassEdge)),
+            foregroundDecoration: BoxDecoration(gradient: kGloss, borderRadius: R.all(R.md)),
             child: Icon(icon, size: 22, color: c.text2),
           ),
         ),
@@ -544,10 +544,12 @@ class _ProfileCard extends StatelessWidget {
             padding: EdgeInsets.all(collapsed ? S.x1 : S.x2),
             decoration: BoxDecoration(
               gradient: selected ? c.accentGradient : null,
-              color: selected ? null : c.surfaceAlt,
+              color: selected ? null : c.glass,
               borderRadius: R.all(R.lg),
+              border: Border.all(color: selected ? const Color(0x55FFFFFF) : c.glassEdge),
               boxShadow: selected ? Shadows.glow(c.accent, c, strength: 0.6) : null,
             ),
+            foregroundDecoration: const BoxDecoration(gradient: kGloss),
             child: collapsed
                 ? Center(child: avatar)
                 : Row(children: [
