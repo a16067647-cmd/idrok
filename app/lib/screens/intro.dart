@@ -86,7 +86,8 @@ class _IntroVideoState extends State<IntroVideo> {
         child: ready
             ? SizedBox.expand(
                 child: FittedBox(
-                  fit: BoxFit.cover,
+                  // Kompyuterda video kesilmaydi, o‘rtada turadi / на компьютере видео не обрезается
+                  fit: MediaQuery.sizeOf(context).width >= 700 ? BoxFit.contain : BoxFit.cover,
                   child: SizedBox(
                     width: _c.value.size.width,
                     height: _c.value.size.height,

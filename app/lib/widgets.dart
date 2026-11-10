@@ -1791,19 +1791,59 @@ class GroupRow extends StatelessWidget {
 
 /// Tab sahifasi: sarlavha qatori + katta sarlavha + bo‘limlar.
 /// Страница вкладки: шапка + большой заголовок + секции.
+/// Keng ekran (kompyuter) chegarasi / порог широкого экрана (компьютер).
+const double kWideBreak = 1000;
+bool isWide(BuildContext context) => MediaQuery.sizeOf(context).width >= kWideBreak;
+
 class TabPage extends StatelessWidget {
   final String? title;
   final String? subtitle;
   final Widget? trailing;
   final List<Widget> children;
   final Future<void> Function()? onRefresh;
-  const TabPage({super.key, this.title, this.subtitle, this.trailing, required this.children, this.onRefresh});
+
+  /// Keng ekranda: dastlabki [split] ta bo‘lim chapda, qolgani o‘ngda.
+  /// На широком экране: первые [split] блоков слева, остальные справа.
+  final int? split;
+  const TabPage(
+      {super.key, this.title, this.subtitle, this.trailing, required this.children, this.onRefresh, this.split});
 
   @override
   Widget build(BuildContext context) {
     final c = colorsOf(context);
-    final list = ListView(
-      padding: EdgeInsets.fromLTRB(S.page, S.x3, S.page, MediaQuery.paddingOf(context).bottom + S.x6),
+    final wide = isWide(context) && !InPage.of(context);
+    final sp = split;
+    Widget col(int from, int to, {bool first = false}) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (var i = from; i < to; i++) ...[
+              if (i > from) const SizedBox(height: S.x5),
+              Appear(index: i, child: children[i]),
+            ],
+          ],
+        );
+    final List<Widget> body;
+    if (wide && sp != null && sp > 0 && sp < children.length) {
+      body = [
+        const SizedBox(height: S.x6),
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Expanded(child: col(0, sp)),
+          const SizedBox(width: S.x6),
+          Expanded(child: col(sp, children.length)),
+        ]),
+      ];
+    } else {
+      body = [
+        for (var i = 0; i < children.length; i++) ...[
+          SizedBox(height: i == 0 && title == null ? S.x6 : S.x5),
+          Appear(index: i, child: children[i]),
+        ],
+      ];
+    }
+    final two = wide && sp != null;
+    Widget list = ListView(
+      padding: EdgeInsets.fromLTRB(
+          wide ? S.x6 : S.page, wide ? S.x5 : S.x3, wide ? S.x6 : S.page, MediaQuery.paddingOf(context).bottom + S.x6),
       physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       children: [
@@ -1812,14 +1852,135 @@ class TabPage extends StatelessWidget {
           const SizedBox(height: S.x3),
           LargeTitle(title!, subtitle: subtitle, trailing: trailing),
         ],
-        for (var i = 0; i < children.length; i++) ...[
-          SizedBox(height: i == 0 && title == null ? S.x6 : S.x5),
-          Appear(index: i, child: children[i]),
-        ],
+        ...body,
       ],
     );
+    if (wide) {
+      list = Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(constraints: BoxConstraints(maxWidth: two ? 1180 : 760), child: list),
+      );
+    }
     if (onRefresh == null) return list;
     return RefreshIndicator.adaptive(onRefresh: onRefresh!, color: c.accent, child: list);
+  }
+}
+
+/// Kompyuter uchun yon menyu / боковое меню для компьютера.
+class SideNav extends StatelessWidget {
+  final List<(String, IconData, String)> items; // (id, ikonka, nom)
+  final int index;
+  final ValueChanged<int> onTap;
+  final Widget logo;
+  final String title;
+  final Widget? footer;
+  const SideNav(
+      {super.key,
+      required this.items,
+      required this.index,
+      required this.onTap,
+      required this.logo,
+      required this.title,
+      this.footer});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = colorsOf(context);
+    return Container(
+      width: 248,
+      margin: const EdgeInsets.all(S.x4),
+      padding: const EdgeInsets.all(S.x4),
+      decoration: BoxDecoration(
+        color: c.surface,
+        borderRadius: R.all(R.xxl),
+        border: Border.all(color: c.hairline),
+        boxShadow: Shadows.card(c),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(S.x1, S.x1, S.x1, S.x5),
+          child: Row(children: [
+            logo,
+            const SizedBox(width: S.x3),
+            Expanded(
+              child: Text(title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppType.headline.copyWith(color: c.text, fontWeight: w8)),
+            ),
+          ]),
+        ),
+        Expanded(
+          child: ListView(padding: EdgeInsets.zero, children: [
+            for (var i = 0; i < items.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(bottom: S.x1),
+                child: _SideItem(
+                  key: ValueKey('side-${items[i].$1}'),
+                  icon: items[i].$2,
+                  label: items[i].$3,
+                  selected: i == index,
+                  onTap: () => onTap(i),
+                ),
+              ),
+          ]),
+        ),
+        if (footer != null) footer!,
+      ]),
+    );
+  }
+}
+
+class _SideItem extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  const _SideItem({super.key, required this.icon, required this.label, required this.selected, required this.onTap});
+
+  @override
+  State<_SideItem> createState() => _SideItemState();
+}
+
+class _SideItemState extends State<_SideItem> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = colorsOf(context);
+    final sel = widget.selected;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: Pressable(
+        onTap: widget.onTap,
+        scale: 0.98,
+        semanticLabel: widget.label,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(horizontal: S.x3, vertical: 11),
+          decoration: BoxDecoration(
+            gradient: sel ? c.accentGradient : null,
+            color: sel ? null : (_hover ? c.accentSoft : Colors.transparent),
+            borderRadius: R.all(R.md),
+            boxShadow: sel ? Shadows.glow(c.accent, c, strength: 0.7) : null,
+          ),
+          child: Row(children: [
+            Icon(widget.icon, size: 21, color: sel ? Colors.white : (_hover ? c.accentText : c.text2)),
+            const SizedBox(width: S.x3),
+            Expanded(
+              child: Text(widget.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppType.subhead
+                      .copyWith(color: sel ? Colors.white : (_hover ? c.accentText : c.text), fontWeight: sel ? w7 : w6)),
+            ),
+          ]),
+        ),
+      ),
+    );
   }
 }
 

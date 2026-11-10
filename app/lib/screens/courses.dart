@@ -21,6 +21,7 @@ class CoursesTab extends StatelessWidget {
     final course = s.course;
     return TabPage(
       title: s.t('courses'),
+      split: 4,
       children: [
         const _CoursePicker(),
         _CourseHero(course: course),

@@ -318,5 +318,22 @@ void main() {
     await settle(t, 1500);
     await shot(t, '${n++}-admin-dash');
     await t.pump(const Duration(seconds: 4));
+
+    // Kompyuter ko‘rinishi / вид на компьютере
+    t.view.physicalSize = const Size(1440, 900);
+    t.view.devicePixelRatio = 1;
+    await settle(t, 1200);
+    await shot(t, 'desk-1-admin-dash');
+    state.user = null;
+    for (final tab in ['home', 'courses', 'play', 'ranking', 'profile', 'shop']) {
+      state.go(tab);
+      await settle(t, 1500);
+      await shot(t, 'desk-2-$tab');
+    }
+    state.toggleTheme();
+    state.go('home');
+    await settle(t, 1500);
+    await shot(t, 'desk-3-home-dark');
+    await t.pump(const Duration(seconds: 4));
   }, skip: _dir == null);
 }

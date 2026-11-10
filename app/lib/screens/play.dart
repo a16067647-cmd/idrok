@@ -64,6 +64,7 @@ class _PlayTabState extends State<PlayTab> {
     return TabPage(
       title: s.t('play_title'),
       subtitle: s.t('play_text'),
+      split: 3,
       children: [
         CodeEditor(initial: s.playCode, onChanged: (v) => s.playCode = v, minLines: 9, label: 'main.py'),
         AppTextField(

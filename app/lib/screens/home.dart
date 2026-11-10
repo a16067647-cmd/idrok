@@ -44,6 +44,7 @@ class HomeTab extends StatelessWidget {
     return TabPage(
       title: '${s.tr(greet)}${name.isNotEmpty ? ', $name' : ''} 👋',
       subtitle: s.leagueName,
+      split: 3,
       children: [
         const _TodayCard(),
         _Continue(next: next),

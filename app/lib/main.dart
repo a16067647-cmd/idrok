@@ -266,6 +266,30 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     };
     final sel = tabs.contains(tab) ? tabs.indexOf(tab) : tabs.length - 1;
 
+    final wide = isWide(context);
+    final switcher = AnimatedSwitcher(
+      duration: Motion.of(context, Motion.base),
+      switchInCurve: Motion.curve,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, anim) => FadeTransition(
+        opacity: anim,
+        child: SlideTransition(
+          position: Tween(begin: const Offset(0, 0.012), end: Offset.zero).animate(anim),
+          child: child,
+        ),
+      ),
+      layoutBuilder: (current, previous) => Stack(
+        alignment: Alignment.topCenter,
+        children: [...previous, if (current != null) current],
+      ),
+      child: KeyedSubtree(key: ValueKey('$tab-${s.lang}'), child: body),
+    );
+    final navItems = [for (final k in tabs) (k, meta[k]!.$1, meta[k]!.$2)];
+    void onNav(int i) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      s.go(tabs[i]);
+    }
+
     return PopScope(
       canPop: tab == tabs.first,
       onPopInvokedWithResult: (didPop, _) {
@@ -279,41 +303,58 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           body: AppBackground(
             child: SafeArea(
               bottom: false,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 640),
-                  child: AnimatedSwitcher(
-                    duration: Motion.of(context, Motion.base),
-                    switchInCurve: Motion.curve,
-                    switchOutCurve: Curves.easeInCubic,
-                    transitionBuilder: (child, anim) => FadeTransition(
-                      opacity: anim,
-                      child: SlideTransition(
-                        position: Tween(begin: const Offset(0, 0.012), end: Offset.zero).animate(anim),
-                        child: child,
+              child: wide
+                  // Kompyuter: yon menyu + keng maydon / компьютер: боковое меню + широкая область
+                  ? Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                      SideNav(
+                        items: navItems,
+                        index: sel,
+                        onTap: onNav,
+                        logo: const AppLogo(size: 40),
+                        title: kAppName,
+                        footer: _SideFooter(),
                       ),
-                    ),
-                    layoutBuilder: (current, previous) => Stack(
+                      Expanded(child: switcher),
+                    ])
+                  : Align(
                       alignment: Alignment.topCenter,
-                      children: [...previous, if (current != null) current],
+                      child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 640), child: switcher),
                     ),
-                    child: KeyedSubtree(key: ValueKey('$tab-${s.lang}'), child: body),
-                  ),
-                ),
-              ),
             ),
           ),
-          bottomNavigationBar: FloatingNavBar(
-            items: [for (final k in tabs) (k, meta[k]!.$1, meta[k]!.$2)],
-            index: sel,
-            onTap: (i) {
-              FocusManager.instance.primaryFocus?.unfocus();
-              s.go(tabs[i]);
-            },
-          ),
+          bottomNavigationBar: wide ? null : FloatingNavBar(items: navItems, index: sel, onTap: onNav),
         ),
       ),
+    );
+  }
+}
+
+/// Yon menyu pasti: foydalanuvchi / низ бокового меню: пользователь.
+class _SideFooter extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final s = AppScope.of(context);
+    final c = s.c;
+    final name = s.displayName.trim().isEmpty ? s.username : s.displayName.trim();
+    return Container(
+      padding: const EdgeInsets.all(S.x3),
+      decoration: BoxDecoration(color: c.accentSoft, borderRadius: R.all(R.lg)),
+      child: Row(children: [
+        IconTile(Icons.person_rounded, size: 38, circle: true, bg: c.surface, color: c.accentText),
+        const SizedBox(width: S.x3),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(name.isEmpty ? kAppName : name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppType.subhead.copyWith(color: c.text, fontWeight: w7)),
+            Text(s.isStaff ? s.t(s.isAdmin ? 'role_admin' : 'role_teacher') : '${s.st.xp} XP',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppType.footnote.copyWith(color: c.text2)),
+          ]),
+        ),
+      ]),
     );
   }
 }
