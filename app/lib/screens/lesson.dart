@@ -169,6 +169,7 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    HardwareKeyboard.instance.addHandler(_onKey);
     if (widget.custom != null) {
       lesson = widget.custom;
       course = widget.customCourse;
@@ -232,6 +233,7 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
 
   @override
   void dispose() {
+    HardwareKeyboard.instance.removeHandler(_onKey);
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
     _left.dispose();
@@ -239,6 +241,39 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
     _fillCtrl.dispose();
     FocusMode.restore();
     super.dispose();
+  }
+
+  // ---------------------------------------------------------------- Enter tugmasi / клавиша Enter
+  DateTime _lastKeyAct = DateTime.fromMillisecondsSinceEpoch(0);
+
+  /// Kompyuterda Enter: javobni tekshiradi, tekshirilgan bo‘lsa — keyingisiga o‘tadi.
+  /// На компьютере Enter: проверяет ответ, а если уже проверен — переходит дальше.
+  bool _onKey(KeyEvent e) {
+    if (e is! KeyDownEvent) return false; // ushlab turganda takrorlanmaydi / удержание не повторяет
+    if (e.logicalKey != LogicalKeyboardKey.enter && e.logicalKey != LogicalKeyboardKey.numpadEnter) return false;
+    if (!mounted || ModalRoute.of(context)?.isCurrent != true) return false; // oynalar ustida emas / не поверх окон
+    // Matn maydonida Enter o‘zi ishlaydi (javob yuborish yoki yangi qator) / в поле ввода Enter работает сам
+    final f = FocusManager.instance.primaryFocus?.context;
+    if (f != null && (f.widget is EditableText || f.findAncestorWidgetOfExactType<EditableText>() != null)) return false;
+    final now = DateTime.now();
+    if (now.difference(_lastKeyAct) < const Duration(milliseconds: 300)) return false; // qo‘sh bosilishdan saqlanish
+    if (phase == _Phase.gate) {
+      if (_starting) return false;
+      _lastKeyAct = now;
+      _start();
+      return true;
+    }
+    if (phase != _Phase.test) return false;
+    final isNext = step.type == StepType.read || status == 'ok' || timedOut || (_oneShot && status != null);
+    if (isNext) {
+      _lastKeyAct = now;
+      _next();
+      return true;
+    }
+    if (!_canCheck) return false;
+    _lastKeyAct = now;
+    _check();
+    return true;
   }
 
   // ---------------------------------------------------------------- himoya / защита
@@ -450,6 +485,7 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
 
   Future<void> _check() async {
     if (!_canCheck) return;
+    _lastKeyAct = DateTime.now();
     final st = step;
     FocusManager.instance.primaryFocus?.unfocus();
     bool ok = false;
@@ -1067,7 +1103,7 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
         } else if (!_oneShot) {
           extra.add(s.t('try_again'));
         }
-        if (wrongOnce || _oneShot) {
+        if (timedOut || _oneShot || (wrongOnce && st.type == StepType.tryIt)) {
           if (st.type == StepType.fill) {
             extra.add('${s.t('answer')}: ${st.answers.first}');
             extraMono = true;
@@ -1235,7 +1271,9 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
 
   _OptState _optionState(int k, LessonStep st) {
     if (status != null) {
-      final reveal = status == 'ok' || wrongOnce || timedOut || _oneShot;
+      // To‘g‘ri javob faqat vaqt tugasa yoki bir martalik testda ko‘rsatiladi; oddiy darsda — topguncha yashirin.
+      // Правильный ответ виден только по истечении времени или в одноразовом тесте; в обычном уроке скрыт, пока не найдёшь.
+      final reveal = status == 'ok' || timedOut || _oneShot;
       if (k == st.answer && reveal) return _OptState.correct;
       if (k == sel && status == 'no') return _OptState.wrong;
       return _OptState.idle;
