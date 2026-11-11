@@ -549,7 +549,7 @@ class _ProfileCard extends StatelessWidget {
               border: Border.all(color: selected ? const Color(0x55FFFFFF) : c.glassEdge),
               boxShadow: selected ? Shadows.glow(c.accent, c, strength: 0.6) : null,
             ),
-            foregroundDecoration: const BoxDecoration(gradient: kGloss),
+            foregroundDecoration: BoxDecoration(gradient: kGloss, borderRadius: R.all(R.lg)),
             child: collapsed
                 ? Center(child: avatar)
                 : Row(children: [

@@ -308,9 +308,7 @@ class _LessonsTabState extends State<LessonsTab> {
                 onTap: () => _push(context, const BooksScreen())),
           ]),
         if (admin)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
+          HScroll(
             child: Row(children: [
               for (final co in kCourses) ...[
                 _CourseChip(co: co, on: co.id == _course, onTap: () => setState(() => _course = co.id)),
@@ -520,9 +518,7 @@ class _CoursePickRow extends StatelessWidget {
   const _CoursePickRow({required this.value, required this.onChanged});
 
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
+  Widget build(BuildContext context) => HScroll(
         child: Row(children: [
           for (final co in kCourses) ...[
             _CourseChip(co: co, on: co.id == value, onTap: () => onChanged(co.id)),

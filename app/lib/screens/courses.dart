@@ -109,10 +109,8 @@ class _CoursePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = AppScope.of(context);
     final c = s.c;
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    return HScroll(
       clipBehavior: Clip.none,
-      physics: const BouncingScrollPhysics(),
       child: Row(children: [
         for (final x in kCourses) ...[
           Pressable(

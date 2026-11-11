@@ -9,6 +9,7 @@ import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/cupertino.dart' show CupertinoActivityIndicator;
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -2279,4 +2280,54 @@ class _FloatyState extends State<Floaty> with SingleTickerProviderStateMixin {
       },
     );
   }
+}
+
+
+// ============================================================ GORIZONTAL AYLANTIRISH / ГОРИЗОНТАЛЬНАЯ ПРОКРУТКА
+/// Gorizontal qator: kompyuterda sichqoncha bilan sudrash va oddiy g‘ildirak ham ishlaydi.
+/// Горизонтальный ряд: на компьютере работает перетаскивание мышью и обычное колесо мыши.
+class HScroll extends StatefulWidget {
+  final Widget child;
+  final Clip clipBehavior;
+  final EdgeInsetsGeometry? padding;
+  const HScroll({super.key, required this.child, this.clipBehavior = Clip.hardEdge, this.padding});
+
+  @override
+  State<HScroll> createState() => _HScrollState();
+}
+
+class _HScrollState extends State<HScroll> {
+  final _c = ScrollController();
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  void _wheel(PointerSignalEvent e) {
+    if (e is! PointerScrollEvent || !_c.hasClients) return;
+    final d = e.scrollDelta.dx != 0 ? e.scrollDelta.dx : e.scrollDelta.dy;
+    final p = _c.position;
+    final to = (p.pixels + d).clamp(p.minScrollExtent, p.maxScrollExtent);
+    // Chetga yetganda sahifa o‘zi aylanadi / у края прокручивается сама страница
+    if (to == p.pixels) return;
+    GestureBinding.instance.pointerSignalResolver.register(e, (_) => _c.jumpTo(to));
+  }
+
+  @override
+  Widget build(BuildContext context) => Listener(
+        onPointerSignal: _wheel,
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(dragDevices: PointerDeviceKind.values.toSet(), scrollbars: false),
+          child: SingleChildScrollView(
+            controller: _c,
+            scrollDirection: Axis.horizontal,
+            clipBehavior: widget.clipBehavior,
+            padding: widget.padding,
+            physics: const BouncingScrollPhysics(),
+            child: widget.child,
+          ),
+        ),
+      );
 }
