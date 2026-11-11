@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../course_art.dart';
 import '../lessons.dart';
 import '../progress.dart';
 import '../state.dart';
@@ -223,7 +224,7 @@ class _TodayCard extends StatelessWidget {
               width: 92,
               height: 92,
               child: CustomPaint(
-                painter: _RingPainter(v, c.surfaceAlt, const [Color(0xFF2EA6FF), Color(0xFF0A6CFF), Color(0xFF7A5CFF)]),
+                painter: _RingPainter(v, c.surfaceAlt, const [Color(0xFF38C8FF), Color(0xFF2EA6FF), Color(0xFF0A6CFF)]),
                 child: Center(
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     const Icon(Icons.bolt_rounded, color: Color(0xFFFFB800), size: 22),
@@ -621,17 +622,7 @@ class _ShineState extends State<_Shine> with SingleTickerProviderStateMixin {
   }
 }
 
-// ------------------------------------------------------------ rangli kurs kartalari / цветные карточки курсов
-const Map<String, List<Color>> kTileColors = {
-  'pc': [Color(0xFF3DDC97), Color(0xFF0E8F68)],
-  'html': [Color(0xFF4DB0FF), Color(0xFF0A6CFF)],
-  'css': [Color(0xFF4656FF), Color(0xFF0A1226)],
-  'js': [Color(0xFF2CC4F7), Color(0xFF0A84D6)],
-  'py': [Color(0xFF9A8CFF), Color(0xFF5B6CFF)],
-  'ai': [Color(0xFFB45CFF), Color(0xFF2D3FE0)],
-  'cy': [Color(0xFF1E4D7B), Color(0xFF07101F)],
-};
-
+// ------------------------------------------------------------ shisha kurs kartalari / стеклянные карточки курсов
 class _CourseGrid extends StatelessWidget {
   const _CourseGrid();
 
@@ -662,25 +653,24 @@ class _CourseTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppScope.of(context);
+    final c = s.c;
     final d = s.progressOf(co), n = s.lessonsOf(co).length;
-    final colors = kTileColors[co.id] ?? [hexColor(co.color), hexColor(co.color)];
     final cert = s.certs[co.id];
     final examReady = !s.isStaff && cert == null && s.courseComplete(co) && s.examWait(co) == Duration.zero;
-    final white80 = kWhite.withAlpha(0xCC);
 
     final locked = s.courseLocked(co);
     Widget? badge;
     if (locked) {
-      badge = const Icon(Icons.lock_rounded, color: Color(0xFFFFD54A), size: 22, shadows: kTextShadow);
+      badge = Icon(Icons.lock_rounded, color: c.text2, size: 22);
     } else if (co.id == 'pc' && cert == null && s.league == 'beginner' && !s.isStaff) {
       // Boshlang‘ich liga uchun tavsiya / рекомендация для начальной лиги
       badge = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-        decoration: BoxDecoration(color: const Color(0x33FFFFFF), borderRadius: R.all(R.pill), border: Border.all(color: const Color(0x66FFFFFF))),
-        child: Text(s.tr(const Tr('Siz uchun ⭐', 'Для вас ⭐')), style: AppType.caption.copyWith(color: kWhite, fontWeight: w7)),
+        decoration: BoxDecoration(color: c.accentSoft, borderRadius: R.all(R.pill), border: Border.all(color: c.hairline)),
+        child: Text(s.tr(const Tr('Siz uchun ⭐', 'Для вас ⭐')), style: AppType.caption.copyWith(color: c.accentText, fontWeight: w7)),
       );
     } else if (cert != null) {
-      badge = const Icon(Icons.workspace_premium_rounded, color: Color(0xFFFFD54A), size: 22, shadows: kTextShadow);
+      badge = const Icon(Icons.workspace_premium_rounded, color: Color(0xFFFFB300), size: 22);
     } else if (examReady) {
       badge = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -696,65 +686,42 @@ class _CourseTile extends StatelessWidget {
         s.pickCourse(co.id);
         s.go('courses');
       },
-      child: Container(
-        height: wide ? 150 : 172,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: R.all(R.xl),
-          gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: colors),
-          boxShadow: [BoxShadow(color: colors.last.withAlpha(0x40), blurRadius: 18, offset: const Offset(0, 8))],
-        ),
-        child: Stack(children: [
-          // katta belgi / большой значок
-          Positioned(
-            right: -10,
-            bottom: wide ? -18 : -8,
-            child: Floaty(
-              amount: 5,
-              phase: index * 0.21,
-              period: Duration(milliseconds: 3600 + index * 300),
-              child: Text(co.tag,
-                  style: AppType.monoStrong.copyWith(
-                      fontSize: wide ? 84 : 64, color: kWhite.withAlpha(0x2E), letterSpacing: -2, height: 1)),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(S.x4),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                CourseTag(co, size: 34, fontSize: 11, onColorBg: true),
-                const Spacer(),
-                if (badge != null) badge,
-              ]),
+      child: CourseGlass(
+        course: co,
+        height: 172,
+        child: Padding(
+          padding: const EdgeInsets.all(S.x4),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              // piksel-art belgi (qimirlamaydi — chetlari o‘tkir qoladi) / пиксель-арт значок (неподвижен — края чёткие)
+              CoursePixel(co, size: 48),
               const Spacer(),
-              Text(s.tr(Tr('${index + 1}-OLAM', 'МИР ${index + 1}')),
-                  style: AppType.caption.copyWith(color: white80, fontWeight: w8, letterSpacing: 1.2, fontSize: 10)),
-              Row(children: [
-                Flexible(
-                  child: Text(s.tr(co.name),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppType.headline.copyWith(color: kWhite, fontSize: 17)),
-                ),
-                const SizedBox(width: S.x2),
-                // yulduzlar: 1/3, 2/3, hammasi / звёзды: 1/3, 2/3, всё
-                for (var k = 1; k <= 3; k++)
-                  Icon(Icons.star_rounded,
-                      size: 16,
-                      color: n > 0 && d * 3 >= n * k ? const Color(0xFFFFD54A) : const Color(0x40FFFFFF),
-                      shadows: n > 0 && d * 3 >= n * k ? kTextShadow : null),
-              ]),
-              const SizedBox(height: 1),
-              Text(s.tr(co.sub), maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.caption.copyWith(color: white80)),
-              const SizedBox(height: S.x3),
-              Row(children: [
-                Expanded(child: AppProgress(n == 0 ? 0 : d / n, height: 5, color: kWhite, track: const Color(0x33FFFFFF))),
-                const SizedBox(width: S.x2),
-                Text('$d/$n', style: AppType.caption.copyWith(color: kWhite)),
-              ]),
+              if (badge != null) badge,
             ]),
-          ),
-        ]),
+            const Spacer(),
+            Text(s.tr(Tr('${index + 1}-OLAM', 'МИР ${index + 1}')),
+                style: AppType.caption.copyWith(color: c.text3, fontWeight: w8, letterSpacing: 1.2, fontSize: 10)),
+            Row(children: [
+              Flexible(
+                child: Text(s.tr(co.name),
+                    maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.headline.copyWith(color: c.text, fontSize: 17)),
+              ),
+              const SizedBox(width: S.x2),
+              // yulduzlar: 1/3, 2/3, hammasi / звёзды: 1/3, 2/3, всё
+              for (var k = 1; k <= 3; k++)
+                Icon(Icons.star_rounded,
+                    size: 16, color: n > 0 && d * 3 >= n * k ? const Color(0xFFFFB300) : c.hairlineStrong),
+            ]),
+            const SizedBox(height: 1),
+            Text(s.tr(co.sub), maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.caption.copyWith(color: c.text2)),
+            const SizedBox(height: S.x3),
+            Row(children: [
+              Expanded(child: AppProgress(n == 0 ? 0 : d / n, height: 6, color: courseAccent(co, c))),
+              const SizedBox(width: S.x2),
+              Text('$d/$n', style: AppType.caption.copyWith(color: c.text)),
+            ]),
+          ]),
+        ),
       ),
     );
   }

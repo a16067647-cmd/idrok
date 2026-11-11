@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../course_art.dart';
 import '../lessons.dart';
 import '../progress.dart';
 import '../state.dart';
@@ -130,9 +131,9 @@ class _CoursePicker extends StatelessWidget {
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
                 if (s.courseLocked(x))
-                  Icon(Icons.lock_rounded, size: 22, color: c.text3)
+                  SizedBox.square(dimension: 30, child: Icon(Icons.lock_rounded, size: 22, color: c.text3))
                 else
-                  CourseTag(x, size: 30, fontSize: 10.5),
+                  CoursePixel(x, size: 30),
                 const SizedBox(width: S.x2),
                 Text(s.tr(x.name),
                     style: AppType.subhead.copyWith(
@@ -156,61 +157,34 @@ class _CourseHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = AppScope.of(context);
     final c = s.c;
-    final col = courseColor(course, c);
-    final on = onColor(col);
-    final soft = on == kWhite ? const Color(0xDDFFFFFF) : const Color(0xB3111111);
     final d = s.progressOf(course), n = s.lessonsOf(course).length;
-    return AnimatedContainer(
-      duration: Motion.of(context, Motion.slow),
-      curve: Motion.curve,
-      padding: const EdgeInsets.all(S.x5),
-      decoration: BoxDecoration(
-        borderRadius: R.all(R.xxl),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color.lerp(col, kWhite, 0.16)!, col],
-        ),
-        border: Border.all(color: on == kWhite ? const Color(0x33FFFFFF) : const Color(0x14000000)),
-        boxShadow: Shadows.glow(col, c, strength: 0.6),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Container(
-            width: 56,
-            height: 56,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: on == kWhite ? const Color(0x2EFFFFFF) : const Color(0x14000000),
-              borderRadius: R.all(R.md + 2),
-              border: Border.all(color: on == kWhite ? const Color(0x40FFFFFF) : const Color(0x1A000000)),
+    return CourseGlass(
+      course: course,
+      radius: R.xxl,
+      child: Padding(
+        padding: const EdgeInsets.all(S.x5),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            CoursePixel(course, size: 64),
+            const SizedBox(width: S.x4),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('${s.t('boss').toUpperCase()} ${kCourses.indexOf(course) + 1}',
+                    style: AppType.overline.copyWith(color: c.text2)),
+                const SizedBox(height: 3),
+                Text(s.tr(course.name), style: AppType.title1.copyWith(color: c.text)),
+                Text(s.tr(course.sub), style: AppType.subhead.copyWith(color: c.text2)),
+              ]),
             ),
-            child: Text(course.tag, style: AppType.monoStrong.copyWith(fontSize: 16, color: on)),
-          ),
-          const SizedBox(width: S.x4),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('${s.t('boss').toUpperCase()} ${kCourses.indexOf(course) + 1}',
-                  style: AppType.overline.copyWith(color: soft)),
-              const SizedBox(height: 3),
-              Text(s.tr(course.name),
-                  style: AppType.title1.copyWith(color: on, shadows: on == kWhite ? kTextShadow : null)),
-              Text(s.tr(course.sub), style: AppType.subhead.copyWith(color: soft)),
-            ]),
-          ),
+          ]),
+          const SizedBox(height: S.x5),
+          Row(children: [
+            Expanded(child: AppProgress(n == 0 ? 0 : d / n, height: 8, color: courseAccent(course, c))),
+            const SizedBox(width: S.x3),
+            Text('$d/$n', style: AppType.footnote.copyWith(color: c.text, fontWeight: w8)),
+          ]),
         ]),
-        const SizedBox(height: S.x5),
-        Row(children: [
-          Expanded(
-            child: AppProgress(n == 0 ? 0 : d / n,
-                height: 8,
-                color: on,
-                track: on == kWhite ? const Color(0x38FFFFFF) : const Color(0x1F000000)),
-          ),
-          const SizedBox(width: S.x3),
-          Text('$d/$n', style: AppType.footnote.copyWith(color: on, fontWeight: w8)),
-        ]),
-      ]),
+      ),
     );
   }
 }

@@ -280,6 +280,9 @@ void main() {
     state.go('home');
     await settle(t, 1200);
     await shot(t, '${n++}-home-dark');
+    await t.drag(find.byType(Scrollable).first, const Offset(0, -700));
+    await settle(t, 1200);
+    await shot(t, 'home-dark-courses');
     state.go('shop');
     await settle(t, 1200);
     await shot(t, '${n++}-shop-dark');
