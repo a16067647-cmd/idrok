@@ -110,6 +110,20 @@ jobs:
           m.update(name='Idrok Academy', short_name='Idrok', background_color='#F5F7FB', theme_color='#0A6CFF',
                    description='Dasturlashni o‘yin orqali o‘rganing')
           json.dump(m, open('web/manifest.json', 'w'), ensure_ascii=False, indent=2)
+          # Telegram/Instagram havola oldindan ko‘rinishi / превью ссылки в Telegram/Instagram
+          p = 'web/index.html'
+          h = open(p, encoding='utf-8').read().replace('<html>', '<html lang="uz">', 1)
+          desc = 'Dasturlashni o‘yin orqali o‘rganing: HTML, CSS, JavaScript, Python, AI va kiberxavfsizlik.'
+          meta = ('<meta name="theme-color" content="#0A6CFF">\n'
+                  '  <meta property="og:type" content="website">\n'
+                  '  <meta property="og:site_name" content="Idrok Academy">\n'
+                  '  <meta property="og:title" content="Idrok Academy">\n'
+                  f'  <meta property="og:description" content="{desc}">\n'
+                  '  <meta property="og:image" content="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/icons/Icon-512.png">\n'
+                  '  <meta name="twitter:card" content="summary">\n  ')
+          if 'og:title' not in h:
+              h = h.replace('<meta name="description"', meta + '<meta name="description"', 1)
+          open(p, 'w', encoding='utf-8').write(h)
           PY
           pip install --quiet pillow
           python3 - <<'PY'
