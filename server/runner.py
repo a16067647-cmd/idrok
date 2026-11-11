@@ -91,9 +91,36 @@ def _safe_import(name, globals=None, locals=None, fromlist=(), level=0):
 
 safe = {n: getattr(_b, n) for n in ALLOWED}
 safe.update(print=_print, input=_input, __import__=_safe_import)
+
+class _Blocked(Exception):
+    pass
+
+def _check(tree):
+    # "__..." orqali qum qutisidan chiqish yo‘lini yopamiz (masalan ().__class__.__subclasses__()).
+    # Закрываем выход из песочницы через "__..." (например ().__class__.__subclasses__()).
+    import ast as _ast
+    # kadr/generator/traceback orqali ham chiqib bo‘ladi / выход возможен и через кадры/генераторы/traceback
+    frames = ("gi_", "cr_", "ag_", "f_", "tb_", "co_", "func_")
+    # OOP darslari uchun zararsizlari (super().__init__ va h.k.) / безопасные для ООП (super().__init__ и т.п.)
+    ok_attrs = {"__init__", "__str__", "__repr__", "__name__", "__len__", "__eq__", "__lt__", "__add__", "__doc__"}
+    for node in _ast.walk(tree):
+        bad = None
+        if isinstance(node, _ast.Attribute) and node.attr not in ok_attrs and (
+                node.attr.startswith("_") or node.attr.startswith(frames)):
+            bad = node.attr
+        elif isinstance(node, _ast.Name) and node.id.startswith("__") and node.id != "__name__":
+            bad = node.id
+        if bad is not None:
+            raise _Blocked("'%%s' ishlatib bo‘lmaydi / нельзя использовать '%%s' (%%d-qator / строка %%d)"
+                           %% (bad, bad, node.lineno, node.lineno))
+
 err = None
 try:
-    exec(compile(code, "<kod>", "exec"), {"__name__": "__main__", "__builtins__": safe})
+    _tree = compile(code, "<kod>", "exec", 0x400)  # ast.PyCF_ONLY_AST
+    _check(_tree)
+    exec(compile(_tree, "<kod>", "exec"), {"__name__": "__main__", "__builtins__": safe})
+except _Blocked as e:
+    err = "SecurityError: %%s" %% e
 except _OutputLimit:
     err = "OutputLimit: natija juda uzun / слишком длинный вывод"
 except MemoryError:

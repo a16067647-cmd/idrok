@@ -79,6 +79,21 @@ def login_allowed(ip):
         return ok
 
 
+def token_key(token):
+    """Bazada tokenning o‘zi emas, faqat SHA-256 xeshi saqlanadi: baza sizib chiqsa ham kirib bo‘lmaydi.
+    В базе хранится только SHA-256 хеш токена: даже при утечке базы войти по нему нельзя."""
+    return hashlib.sha256(token.encode("utf-8", "replace")).hexdigest()
+
+
+def migrate_tokens(conn):
+    """Eski ochiq tokenlarni xeshga aylantiradi (foydalanuvchilar chiqib ketmaydi). Takror ishlatsa bo‘ladi.
+    Переводит старые открытые токены в хеши (пользователей не разлогинит). Можно запускать повторно."""
+    old = [r[0] for r in conn.execute("SELECT token FROM tokens WHERE length(token) <> 64").fetchall()]
+    for t in old:
+        conn.execute("UPDATE OR IGNORE tokens SET token=? WHERE token=?", (token_key(t), t))
+    return len(old)
+
+
 # ---------------------------------------------------------------- ma’lumotlar bazasi / база данных
 def db():
     conn = sqlite3.connect(DB_PATH, timeout=10)
@@ -615,11 +630,11 @@ class Handler(BaseHTTPRequestHandler):
             return None
         return conn.execute(
             "SELECT u.* FROM tokens t JOIN users u ON u.id=t.user_id WHERE t.token=? AND t.created>?",
-            (auth[7:].strip(), time.time() - TOKEN_DAYS * 86400)).fetchone()
+            (token_key(auth[7:].strip()), time.time() - TOKEN_DAYS * 86400)).fetchone()
 
     def new_token(self, conn, user_id):
         token = secrets.token_urlsafe(32)
-        conn.execute("INSERT INTO tokens (token, user_id, created) VALUES (?,?,?)", (token, user_id, time.time()))
+        conn.execute("INSERT INTO tokens (token, user_id, created) VALUES (?,?,?)", (token_key(token), user_id, time.time()))
         return token
 
     # ---- GET
@@ -835,6 +850,10 @@ class Handler(BaseHTTPRequestHandler):
             password = str(data.get("password", ""))
             if len(username) < 3 or len(password) < 4 or len(username) > 30:
                 return self.send_json(400, {"error": "short"})
+            # X-Forwarded-For ni soxtalashtirib bo‘ladi — akkaunt bo‘yicha ham cheklaymiz.
+            # X-Forwarded-For можно подделать — ограничиваем ещё и по аккаунту.
+            if not login_allowed("u:" + username.lower()):
+                return self.send_json(429, {"error": "too_many"})
             with _write_lock, db() as conn:
                 if path == "/api/register":
                     name = clean(data.get("name"), 40)
@@ -1131,7 +1150,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json(200, {"ok": True})
 
             if path == "/api/logout":
-                conn.execute("DELETE FROM tokens WHERE token=?", (self.headers["Authorization"][7:].strip(),))
+                conn.execute("DELETE FROM tokens WHERE token=?", (token_key(self.headers["Authorization"][7:].strip()),))
                 return self.send_json(200, {"ok": True})
 
         return self.send_json(404, {"error": "not_found"})
@@ -1193,6 +1212,7 @@ def main():
     print("=" * 60, flush=True)
     with _write_lock, db() as conn:
         conn.execute("DELETE FROM tokens WHERE created<?", (time.time() - TOKEN_DAYS * 86400,))
+        migrate_tokens(conn)
     cloud.start(DB_PATH)
 
     def stop(*_):
