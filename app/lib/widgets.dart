@@ -2101,7 +2101,7 @@ class LeagueBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = colorsOf(context);
     final (icon, colors) = switch (league) {
-      'master' => (Icons.workspace_premium_rounded, const [Color(0xFF3B4BFF), Color(0xFF0A1226)]),
+      'master' => (Icons.workspace_premium_rounded, const [Color(0xFF1F5FA8), Color(0xFF0A1226)]),
       'advanced' => (Icons.bolt_rounded, const [Color(0xFF3FA9FF), Color(0xFF0058E6)]),
       _ => (Icons.flag_rounded, const [Color(0xFF7FD3FF), Color(0xFF1FA2F0)]),
     };
@@ -2141,7 +2141,7 @@ class _ConfettiState extends State<Confetti> with SingleTickerProviderStateMixin
     Color(0xFFFFC21A),
     Color(0xFFFF5E7E),
     Color(0xFF34C759),
-    Color(0xFF8E7CFF),
+    Color(0xFF38C8FF),
   ];
 
   @override

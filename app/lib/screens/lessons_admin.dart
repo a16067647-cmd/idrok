@@ -123,7 +123,7 @@ class _AdminDashTabState extends State<AdminDashTab> {
               color: const Color(0xFFFF9500),
               title: s.t('ranking'),
               onTap: () => _push(context, const RankingTab())),
-          GroupRow(icon: Icons.key_rounded, color: const Color(0xFF5856D6), title: s.t('codes_tab'), onTap: () => s.go('admin')),
+          GroupRow(icon: Icons.key_rounded, color: const Color(0xFF0A84D6), title: s.t('codes_tab'), onTap: () => s.go('admin')),
         ]),
       ],
     );
@@ -781,7 +781,7 @@ class _LessonEditorScreenState extends State<LessonEditorScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: c.isDark ? const [Color(0xFF1C2140), Color(0xFF14182C)] : const [Color(0xFFF1F4FF), Color(0xFFFFFFFF)],
+            colors: c.isDark ? const [Color(0xFF14213A), Color(0xFF0F1626)] : const [Color(0xFFEEF5FF), Color(0xFFFFFFFF)],
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Row(children: [
@@ -901,7 +901,7 @@ class _Toggle extends StatelessWidget {
 
 Color _stepColor(String t) => switch (t) {
       'read' => const Color(0xFF007AFF),
-      'quiz' => const Color(0xFF5856D6),
+      'quiz' => const Color(0xFF0A84D6),
       'fill' => const Color(0xFFFF9500),
       'order' => const Color(0xFF34C759),
       _ => const Color(0xFFFF2D55),

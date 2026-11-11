@@ -84,7 +84,7 @@ final List<Course> kCourses = [
     _l('js8', 'js', const Tr('Massiv bo‘ylab sikl', 'Цикл по массиву'), js8),
     _l('js9', 'js', const Tr('Obyektlar', 'Объекты'), js9),
   ]),
-  Course(id: 'py', tag: 'Py', color: '#5B6CFF', name: const Tr('Python', 'Python'),
+  Course(id: 'py', tag: 'Py', color: '#3776AB', name: const Tr('Python', 'Python'),
       sub: const Tr('Olimpiada tili', 'Язык олимпиад'), lessons: [
     _l('py1', 'py', const Tr('print()', 'print()'), py1),
     _l('py2', 'py', const Tr('O‘zgaruvchi va input', 'Переменные и input'), py2),
@@ -96,7 +96,7 @@ final List<Course> kCourses = [
     _l('py8', 'py', const Tr('Satrlar', 'Строки'), py8),
     _l('py9', 'py', const Tr('Lug‘atlar', 'Словари'), py9),
   ]),
-  Course(id: 'ai', tag: 'AI', color: '#2D3FE0', name: const Tr('Sun’iy intellekt', 'Искусственный интеллект'),
+  Course(id: 'ai', tag: 'AI', color: '#E8590C', name: const Tr('Sun’iy intellekt', 'Искусственный интеллект'),
       sub: const Tr('AI ni tushunish va yaratish', 'Понять и создать AI'), lessons: [
     _l('ai1', 'ai', const Tr('AI nima?', 'Что такое AI?'), ai1, leagues: kBeginner),
     _l('ai2', 'ai', const Tr('AI qanday o‘rganadi', 'Как учится AI'), ai2, leagues: kBeginner),

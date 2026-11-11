@@ -21,7 +21,7 @@ const List<(double, Color, Color)> _sky = [
   (10, Color(0xFF2E9BFF), Color(0xFFBDE6FF)),
   (14, Color(0xFF1E8CFF), Color(0xFF9FD8FF)),
   (18, Color(0xFF2B4FB5), Color(0xFFF59E7B)),
-  (20, Color(0xFF0E1B55), Color(0xFF3B3F8F)),
+  (20, Color(0xFF0B1F4D), Color(0xFF1F4F8F)),
   (24, Color(0xFF050B24), Color(0xFF14214F)),
 ];
 

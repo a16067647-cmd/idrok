@@ -130,7 +130,7 @@ class _ProfileTabState extends State<ProfileTab> {
     final learning = GroupList([
       GroupRow(
           icon: Icons.military_tech_rounded,
-          color: const Color(0xFF5856D6),
+          color: const Color(0xFF0A84D6),
           title: s.t('league'),
           value: s.leagueName,
           onTap: () => s.go('ranking')),
@@ -175,7 +175,7 @@ class _ProfileTabState extends State<ProfileTab> {
         GroupRow(
             key: const ValueKey('row-applock'),
             icon: Icons.shield_moon_rounded,
-            color: const Color(0xFF5856D6),
+            color: const Color(0xFF0A84D6),
             title: s.t('lock_name'),
             onTap: () => Navigator.of(context).push(AppRoute<void>(builder: (_) => const PageShell(child: AppLockScreen())))),
     ]);

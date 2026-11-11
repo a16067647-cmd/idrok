@@ -327,7 +327,7 @@ class _AppLockScreenState extends State<AppLockScreen> with WidgetsBindingObserv
             ]),
           ),
         GroupList([
-          GroupRow(icon: Icons.schedule_rounded, color: const Color(0xFF5856D6), title: s.t('lock_time'), value: hh, onTap: _time),
+          GroupRow(icon: Icons.schedule_rounded, color: const Color(0xFF0A84D6), title: s.t('lock_time'), value: hh, onTap: _time),
         ]),
         Text(s.t('lock_time_sub'), style: AppType.footnote.copyWith(color: c.text2)),
         SectionHeader(s.t('lock_apps'), trailing: AppPill('${_apps.length}', small: true)),

@@ -307,7 +307,7 @@ p{{margin:6px 0}} .muted{{color:#8e8e93;font-size:14px}}
 .m{{text-align:center}} .m img{{width:100%;aspect-ratio:1;object-fit:cover;border-radius:18px;display:block;margin-bottom:8px}}
 .partner{{width:180px;border-radius:18px;display:block;margin:12px 0}}
 .m b{{display:block}} .m span{{color:#8e8e93;font-size:14px}}
-a{{color:#5b5bf0;text-decoration:none}} .top{{display:flex;justify-content:space-between;margin-bottom:16px}}
+a{{color:#0A6CFF;text-decoration:none}} .top{{display:flex;justify-content:space-between;margin-bottom:16px}}
 </style></head><body><main>
 <div class="top"><b>{APP}</b><a href="{_href(path, other, static)}">{"Русский" if lang == "uz" else "O‘zbekcha"}</a></div>
 <div class="card"><h1>{html.escape(title)}</h1><div class="muted">{upd}</div>
