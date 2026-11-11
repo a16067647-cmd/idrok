@@ -699,19 +699,18 @@ class _CourseTile extends StatelessWidget {
               if (badge != null) badge,
             ]),
             const Spacer(),
-            Text(s.tr(Tr('${index + 1}-OLAM', 'МИР ${index + 1}')),
-                style: AppType.caption.copyWith(color: c.text3, fontWeight: w8, letterSpacing: 1.2, fontSize: 10)),
             Row(children: [
-              Flexible(
-                child: Text(s.tr(co.name),
-                    maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.headline.copyWith(color: c.text, fontSize: 17)),
+              Expanded(
+                child: Text(s.tr(Tr('${index + 1}-OLAM', 'МИР ${index + 1}')),
+                    style: AppType.caption.copyWith(color: c.text3, fontWeight: w8, letterSpacing: 1.2, fontSize: 10)),
               ),
-              const SizedBox(width: S.x2),
               // yulduzlar: 1/3, 2/3, hammasi / звёзды: 1/3, 2/3, всё
               for (var k = 1; k <= 3; k++)
                 Icon(Icons.star_rounded,
-                    size: 16, color: n > 0 && d * 3 >= n * k ? const Color(0xFFFFB300) : c.hairlineStrong),
+                    size: 14, color: n > 0 && d * 3 >= n * k ? const Color(0xFFFFB300) : c.hairlineStrong),
             ]),
+            Text(s.tr(co.name),
+                maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.headline.copyWith(color: c.text, fontSize: 17)),
             const SizedBox(height: 1),
             Text(s.tr(co.sub), maxLines: 1, overflow: TextOverflow.ellipsis, style: AppType.caption.copyWith(color: c.text2)),
             const SizedBox(height: S.x3),
