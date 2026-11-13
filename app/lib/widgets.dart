@@ -15,23 +15,50 @@ import 'package:flutter/services.dart';
 
 import 'config.dart';
 import 'lessons.dart';
+import 'motion_lab.dart';
 import 'state.dart';
 import 'theme.dart';
 
 AppColors colorsOf(BuildContext context) => AppScope.of(context).c;
 
 // ============================================================ FON / ФОН
-/// Ilova foni: yumshoq to‘q sariq va sariq yorug‘lik dog‘lari (shisha uchun chuqurlik).
-/// Фон: мягкие пятна оранжевого и жёлтого света (дают глубину стеклу).
+/// Ilova foni: toza, bir xil fon. [motion] berilsa — ortida IDROK Motion Lab (Neural Learning) jonli tarmog‘i.
+/// Фон: чистый ровный фон. Если задан [motion] — позади живая сеть IDROK Motion Lab (Neural Learning).
+///
+/// Jonli fon faqat tanlangan ekranlarda yoqiladi (standart — o‘chiq): bosh sahifa, kurslar, kirish,
+/// dars boshlanishi/tugashi. Dars savollarida, shakllarda va ustoz jadvallarida — yo‘q.
+/// Живой фон включается только на выбранных экранах (по умолчанию выкл.): главная, курсы, вход,
+/// начало/конец урока. В вопросах урока, формах и таблицах учителя — нет.
 class AppBackground extends StatelessWidget {
   final Widget child;
   final bool strong;
-  const AppBackground({super.key, required this.child, this.strong = false});
+  final MotionLevel motion;
+  const AppBackground({super.key, required this.child, this.strong = false, this.motion = MotionLevel.off});
 
   @override
   Widget build(BuildContext context) {
-    // Minimalizm: toza, bir xil fon / минимализм: чистый ровный фон
-    return ColoredBox(color: colorsOf(context).bg, child: child);
+    final s = AppScope.of(context);
+    final c = s.c;
+    if (!kMotionLab || motion == MotionLevel.off || !s.bgMotion) return ColoredBox(color: c.bg, child: child);
+    final dark = c.isDark;
+    return ColoredBox(
+      color: c.bg,
+      child: Stack(fit: StackFit.passthrough, children: [
+        Positioned.fill(
+          child: MotionLayer(
+            level: motion,
+            animate: !s.testMode,
+            // Brend ranglari: qorong‘ida muzdek ko‘k, yorug‘da asosiy ko‘k / бренд: тёмная — ледяной голубой, светлая — основной синий
+            dot: dark ? Color.lerp(c.accentHi, kWhite, 0.55)! : c.accent,
+            accent: dark ? kSky : c.accentHi,
+            link: dark ? c.accentHi : c.accent,
+            dotAlpha: dark ? 0.6 : 0.42,
+            linkGain: dark ? 0.9 : 0.8,
+          ),
+        ),
+        child,
+      ]),
+    );
   }
 }
 

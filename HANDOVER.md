@@ -89,3 +89,35 @@ Add an entry to `kScenes` in `app/lib/content/scenes.dart` with the lesson id. S
 - Exam runs in `LessonScreen.exam(examCourse:)`: one answer per question, leaving the app cancels it and counts as an attempt.
 - Server: `/api/exam/start`, `/api/exam/finish`, `GET /api/exams`, public check page `/c/<ID>` (tables `exams`, `certs`).
 - Certificate PDF: `app/lib/screens/certificate.dart` (`pdf` + `printing` packages, fonts from app assets).
+
+## IDROK Motion Lab — Academy "Neural Learning" (live background)
+A calm network of small nodes and thin links behind selected screens. Built from the Motion Lab brief,
+**Academy part only** (Business and Uzwork are separate and not touched).
+
+**Files**
+- `app/lib/motion_lab_core.dart` — pure Dart engine (no Flutter): seeded particles, 3 depth layers, soft pointer
+  field with spring return, scroll drift, link search on a spatial grid (no per-frame allocation), automatic quality
+  step-down on slow frames. `MotionProfile` / `kAcademyNeural` hold every tunable value (declarative).
+- `app/lib/motion_lab.dart` — Flutter layer: `MotionInput` (one global pointer route for the whole app, never
+  consumes events), `MotionLayer` (Ticker + `CustomPaint`, no `setState` per frame, `IgnorePointer`).
+- `AppBackground(motion: MotionLevel.off|low|normal)` in `widgets.dart` — default is **off**; a screen opts in.
+- Tests: `app/test/motion_lab_test.dart` (engine limits, determinism, pointer/scroll, quality floor, layer behaviour).
+
+**Where it is on (rollout list)**: main student shell (home, courses, ranking, profile…), login/register screen,
+lesson start and result screens (light). **Off**: during lesson questions and exams, teacher/admin screens, forms
+(profile setup), legal pages, certificates, splash.
+
+**How to tune or disable**
+- Everything off for everyone: `kMotionLab = false` in `app/lib/config.dart`.
+- Per user: Profile → Settings → "Jonli fon / Живой фон" (saved in preferences as `bgmotion`).
+- Automatically static (one frame, no ticker) when the device asks for reduced motion, in `testMode`, or off.
+- Look and feel: edit `kAcademyNeural` (counts, speeds, pointer radius/force, link distance/opacity, accent share).
+  Colours come from the app theme (`AppColors`): `accent`/`accentHi`/`kSky`, never hard-coded.
+- To add the field to another screen: `AppBackground(motion: MotionLevel.low)`. Do not add it to dense tables or forms.
+
+**Limits and budgets**: ≤ 44 nodes on phones, ≤ 90 on desktop (counts by area), `low` level × 0.55, ≤ 3 links per node,
+at most 3 quality levels (1 → 0.65 → 0.4). Frame gaps are clamped to 50 ms. Hidden/offstage routes are muted by `TickerMode`.
+
+**Known limitations**: touch uses finger drags as a scroll proxy (no hover on phones); the device-tier guess is by
+screen size, not GPU; no real-device frame-rate numbers yet — measure on a low-end Android before enabling more screens.
+Optional future idea from the brief (topic-based network presets) is not built.

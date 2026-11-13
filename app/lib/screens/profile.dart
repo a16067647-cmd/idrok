@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app_lock.dart';
+import '../config.dart';
 import '../lessons.dart';
 import '../progress.dart';
 import '../state.dart';
@@ -194,6 +195,14 @@ class _ProfileTabState extends State<ProfileTab> {
           title: s.t('language'),
           value: s.lang == 'uz' ? 'O‘zbekcha' : 'Русский',
           onTap: s.toggleLang),
+      if (kMotionLab)
+        GroupRow(
+            key: const ValueKey('row-motion'),
+            icon: Icons.blur_on_rounded,
+            color: const Color(0xFF0A84D6),
+            title: s.t('bg_motion'),
+            value: s.t(s.bgMotion ? 'on' : 'off'),
+            onTap: s.toggleBgMotion),
     ]);
 
     final legal = GroupList([

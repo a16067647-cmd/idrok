@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'config.dart';
+import 'motion_lab.dart' show MotionLevel;
 import 'screens/auth.dart';
 import 'screens/cards.dart' show CardsTab;
 import 'screens/courses.dart';
@@ -303,7 +304,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
         child: Scaffold(
           extendBody: true,
           backgroundColor: s.c.bg,
+          // Jonli fon: o‘quvchilar uchun; ustoz/admin jadvallarida o‘chiq / живой фон: для учеников; у учителя/админа — выкл.
           body: AppBackground(
+            motion: s.isStaff ? MotionLevel.off : MotionLevel.normal,
             child: SafeArea(
               bottom: false,
               child: wide

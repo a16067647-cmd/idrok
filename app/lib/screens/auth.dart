@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../config.dart';
 import '../main.dart' show AppLogo;
+import '../motion_lab.dart' show MotionLevel;
 import '../state.dart';
 import '../theme.dart';
 import '../widgets.dart';
@@ -244,6 +245,7 @@ class _AuthScreenState extends State<AuthScreen> {
         backgroundColor: c.bg,
         body: AppBackground(
           strong: true,
+          motion: MotionLevel.normal,
           child: SafeArea(
             child: Align(
               alignment: Alignment.topCenter,

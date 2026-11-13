@@ -7,6 +7,10 @@
 /// Для класса (одна сеть Wi‑Fi): `http://192.168.x.x:8765`.
 library;
 
+/// IDROK Motion Lab (jonli fon) umumiy kaliti: false — butunlay o‘chiriladi.
+/// Общий выключатель IDROK Motion Lab (живой фон): false — полностью выключено.
+const bool kMotionLab = true;
+
 /// Akkauntlar, reyting, ustoz paneli / аккаунты, рейтинг, панель учителя.
 const String kDefaultServer = 'https://kodla-api.onrender.com';
 

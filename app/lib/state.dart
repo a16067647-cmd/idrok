@@ -70,6 +70,7 @@ class AppState extends ChangeNotifier {
   // Sozlamalar / настройки (qurilmada saqlanadi / хранятся на устройстве)
   String lang = 'uz';
   String theme = 'system'; // system | light | dark
+  bool bgMotion = true; // jonli fon (Motion Lab) / живой фон (Motion Lab)
   Brightness platformBrightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
   String server = kDefaultServer;
   String token = '';
@@ -266,6 +267,7 @@ class AppState extends ChangeNotifier {
     lang = s('lang', 'uz') == 'ru' ? 'ru' : 'uz';
     final th = s('theme', 'system');
     theme = const ['system', 'light', 'dark'].contains(th) ? th : 'system';
+    bgMotion = j['bgmotion'] is bool ? j['bgmotion'] as bool : true;
     server = s('server', kDefaultServer);
     if (server.trim().isEmpty) server = kDefaultServer;
     token = s('token', '');
@@ -310,6 +312,7 @@ class AppState extends ChangeNotifier {
     final data = {
       'lang': lang,
       'theme': theme,
+      'bgmotion': bgMotion,
       'server': server,
       'token': token,
       'mode': mode,
@@ -1020,6 +1023,12 @@ class AppState extends ChangeNotifier {
   }
 
   void toggleTheme() => setTheme(isDark ? 'light' : 'dark');
+
+  void toggleBgMotion() {
+    bgMotion = !bgMotion;
+    savePrefs();
+    notifyListeners();
+  }
 
   void toggleLang() {
     lang = lang == 'uz' ? 'ru' : 'uz';

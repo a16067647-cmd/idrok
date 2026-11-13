@@ -9,6 +9,7 @@ import '../api.dart' show pingRunner;
 import '../focus.dart';
 import '../lessons.dart';
 import '../progress.dart';
+import '../motion_lab.dart' show MotionLevel;
 import '../state.dart';
 import '../theme.dart';
 import '../widgets.dart';
@@ -684,6 +685,9 @@ class _LessonScreenState extends State<LessonScreen> with SingleTickerProviderSt
         backgroundColor: c.bg,
         body: AppBackground(
           strong: phase != _Phase.test,
+          // Savol paytida fon o‘chiq (diqqat uchun); boshlanish va tugash ekranlarida yengil
+          // Во время вопросов фон выключен (для внимания); на экранах старта и итога — лёгкий
+          motion: phase == _Phase.test ? MotionLevel.off : MotionLevel.low,
           child: SafeArea(
             child: Align(
               alignment: Alignment.topCenter,
