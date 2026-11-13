@@ -168,6 +168,10 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
+      # GitHub artefaktlar ro‘yxatini biroz kechikib yangilaydi — deploy juda erta "artefakt yo‘q" deb xato beradi.
+      # GitHub обновляет список артефактов с задержкой — слишком ранний deploy падает с «артефакт не найден».
+      - name: Wait for the Pages artifact to be listed
+        run: sleep 45
       - uses: actions/deploy-pages@v4
         id: deploy
 
