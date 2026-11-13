@@ -197,9 +197,9 @@ void main() {
       await t.pump(const Duration(milliseconds: 100));
       await t.pumpWidget(const SizedBox());
       await t.pump();
-      expect(tester_noExceptions(t), isTrue);
+      expect(noExceptions(t), isTrue);
     });
   });
 }
 
-bool tester_noExceptions(WidgetTester t) => t.takeException() == null;
+bool noExceptions(WidgetTester t) => t.takeException() == null;
