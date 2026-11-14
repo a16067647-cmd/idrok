@@ -221,12 +221,17 @@ class AppState extends ChangeNotifier {
       // buzilgan sozlamalar — standart qiymatlar bilan / повреждённые настройки — по умолчанию
     }
     api = Api(server, token: token.isEmpty ? null : token);
+    // Serverni darhol uyg‘otamiz (fon rejimida) — foydalanuvchi login yozguncha u tayyor bo‘ladi.
+    // Сразу будим сервер (в фоне) — пока пользователь вводит логин, он уже проснётся.
+    if (!testMode && mode != 'offline') {
+      Api(server).call('/api/ping', null, kWakeTimeout).then((_) {}, onError: (_) {});
+    }
     st = normalize(offlineState);
     applyContent(contentRaw);
     await loadShop();
     if (mode == 'online' && token.isNotEmpty && !testMode) {
       try {
-        final res = await api.call('/api/me');
+        final res = await api.call('/api/me', null, kWakeTimeout);
         _setUser(res['user']);
         loadExams();
         loadContent();
@@ -394,7 +399,7 @@ class AppState extends ChangeNotifier {
               if (!asTeacher) 'parent': parent,
             },
           },
-          const Duration(seconds: 40));
+          kWakeTimeout);
       a.token = '${res['token']}';
       api = a;
       server = srv;

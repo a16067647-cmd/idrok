@@ -23,3 +23,7 @@ const String kAppName = 'Idrok Academy';
 
 /// So‘rov kutish vaqti / таймаут запросов.
 const Duration kRequestTimeout = Duration(seconds: 12);
+
+/// Bepul Render serveri uxlab qolsa, uyg‘onishi 20–60 soniya oladi. Kirish va ochilishda shuncha kutamiz.
+/// Бесплатный сервер Render после сна просыпается 20–60 секунд. При входе и запуске ждём столько.
+const Duration kWakeTimeout = Duration(seconds: 75);

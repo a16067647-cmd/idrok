@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart' show CupertinoActivityIndicator;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -139,8 +141,50 @@ class SplashScreen extends StatelessWidget {
             Text(kAppName, style: AppType.title1.copyWith(color: c.text)),
             const SizedBox(height: S.x6),
             CupertinoActivityIndicator(color: c.text2, radius: 11),
+            const _WakeHint(),
           ]),
         ),
+      ),
+    );
+  }
+}
+
+/// Yuklanish cho‘zilsa (server uxlagan), 5 soniyadan keyin izoh chiqadi.
+/// Если загрузка затянулась (сервер спал), через 5 секунд появляется подсказка.
+class _WakeHint extends StatefulWidget {
+  const _WakeHint();
+
+  @override
+  State<_WakeHint> createState() => _WakeHintState();
+}
+
+class _WakeHintState extends State<_WakeHint> {
+  Timer? _t;
+  bool _show = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _t = Timer(const Duration(seconds: 5), () {
+      if (mounted) setState(() => _show = true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _t?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = AppScope.of(context);
+    return AnimatedOpacity(
+      opacity: _show ? 1 : 0,
+      duration: Motion.of(context, Motion.slow),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(S.x6, S.x4, S.x6, 0),
+        child: Text(s.t('waking'), textAlign: TextAlign.center, style: AppType.footnote.copyWith(color: s.c.text2)),
       ),
     );
   }
