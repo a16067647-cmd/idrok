@@ -643,6 +643,12 @@ class Handler(BaseHTTPRequestHandler):
         params = dict(p.split("=", 1) for p in query.split("&") if "=" in p)
         if path in ("/", "/api/ping"):
             return self.send_json(200, {"ok": True, "app": "idrok"})
+        if path == "/api/health":
+            # Faqat ha/yo‘q qiymatlar, hech qanday kalit yo‘q / только да/нет, никаких ключей
+            with db() as conn:
+                users = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+            return self.send_json(200, {"ok": True, "backup": cloud.enabled, "users": users,
+                                        "legal_version": legal.VERSION})
         if path == "/api/shop":
             return self.send_json(200, {"items": list(SHOP.values())})
         if path.startswith("/team/") and path[6:].removesuffix(".jpg") in {t[0] for t in legal.TEAM} | {legal.PARTNER_LOGO}:
@@ -1209,6 +1215,10 @@ def main():
         if not args.teacher_password:
             print("  ⚠ Parol standart. O‘zgartiring! / Пароль по умолчанию. Смените!")
     print(f"  Python /api/run: {'yoqilgan' if RUN_ENABLED else 'o‘chirilgan'}")
+    if not cloud.enabled:
+        print("  ⚠⚠⚠ Supabase ZAXIRASI YO‘Q: server qayta ishga tushganda barcha akkauntlar O‘CHADI!", flush=True)
+        print("  ⚠⚠⚠ НЕТ резервной копии Supabase: при перезапуске сервера ВСЕ аккаунты ИСЧЕЗНУТ!", flush=True)
+        print("      Render → kodla-api → Environment: SUPABASE_URL va SUPABASE_KEY (service_role).", flush=True)
     print("=" * 60, flush=True)
     with _write_lock, db() as conn:
         conn.execute("DELETE FROM tokens WHERE created<?", (time.time() - TOKEN_DAYS * 86400,))
