@@ -560,7 +560,7 @@ class _Continue extends StatelessWidget {
                   Text(nx != null ? s.t('continue') : s.t('courses'),
                       style: AppType.headline.copyWith(color: btnText)),
                   const SizedBox(width: 6),
-                  const Icon(Icons.play_arrow_rounded, color: Color(0xFF0058E6)),
+                  Icon(Icons.play_arrow_rounded, color: btnText),
                 ]),
               ),
             ),
