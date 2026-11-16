@@ -264,21 +264,6 @@ class _AppButtonState extends State<AppButton> {
         boxShadow: shadow,
       ),
       child: Stack(alignment: Alignment.center, children: [
-        if (sheen)
-          Positioned.fill(
-            child: IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: radius,
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.center,
-                    colors: [Color(0x40FFFFFF), Color(0x00FFFFFF)],
-                  ),
-                ),
-              ),
-            ),
-          ),
         Positioned.fill(
           child: IgnorePointer(
             child: AnimatedOpacity(
@@ -775,7 +760,9 @@ class SectionHeader extends StatelessWidget {
     final c = colorsOf(context);
     return Padding(
       padding: const EdgeInsets.only(left: 2, top: S.x1),
-      child: Row(children: [
+      child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        // Kod izohi belgisi — Idrok uslubi / знак комментария кода — стиль Idrok
+        Text('// ', style: AppType.monoStrong.copyWith(fontSize: 17, color: c.accent, height: 1.3)),
         Expanded(child: Text(title, style: AppType.title3.copyWith(color: c.text))),
         if (trailing != null) trailing!,
       ]),
@@ -1823,12 +1810,8 @@ class GroupRow extends StatelessWidget {
 /// Tab sahifasi: sarlavha qatori + katta sarlavha + bo‘limlar.
 /// Страница вкладки: шапка + большой заголовок + секции.
 /// iOS yaltiroq qatlami (yuqori yarmida oq nur) / глянцевый блик iOS (свет в верхней половине).
-const kGloss = LinearGradient(
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-  colors: [Color(0x38FFFFFF), Color(0x0AFFFFFF), Color(0x00FFFFFF)],
-  stops: [0, 0.5, 0.51],
-);
+/// Endi o‘chirilgan: yaltiroq qatlam "AI dizayn"ga o‘xshardi / теперь выключен: блик выглядел «как AI».
+const kGloss = LinearGradient(colors: [Color(0x00FFFFFF), Color(0x00FFFFFF)]);
 
 /// Keng ekran (kompyuter) chegarasi / порог широкого экрана (компьютер).
 const double kWideBreak = 1000;

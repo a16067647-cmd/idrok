@@ -36,7 +36,7 @@ StepBuilder _withScene(String id, StepBuilder b) {
 final List<Course> kCourses = [
   // Kompyuter savodxonligi — boshlang‘ich liga uchun tavsiya, majburiy emas.
   // Компьютерная грамотность — рекомендуется начальной лиге, не обязательно.
-  Course(id: 'pc', tag: 'PC', color: '#13B07B', name: const Tr('Kompyuter savodxonligi', 'Компьютерная грамотность'),
+  Course(id: 'pc', tag: 'PC', color: '#2D9C5A', name: const Tr('Kompyuter savodxonligi', 'Компьютерная грамотность'),
       sub: const Tr('Word, Excel, PowerPoint', 'Word, Excel, PowerPoint'), lessons: [
     _l('pc1', 'pc', const Tr('Fayl va papkalar', 'Файлы и папки'), pc1),
     _l('pc2', 'pc', const Tr('Tezkor tugmalar', 'Горячие клавиши'), pc2),
@@ -48,7 +48,7 @@ final List<Course> kCourses = [
     _l('pc8', 'pc', const Tr('Ajoyib taqdimot', 'Отличная презентация'), pc8),
     _l('pc9', 'pc', const Tr('Internet va xavfsizlik', 'Интернет и безопасность'), pc9),
   ]),
-  Course(id: 'html', tag: '</>', color: '#0A6CFF', name: const Tr('HTML', 'HTML'),
+  Course(id: 'html', tag: '</>', color: '#E34F26', name: const Tr('HTML', 'HTML'),
       sub: const Tr('Veb-sahifa tuzilishi', 'Структура веб-страницы'), lessons: [
     _l('html1', 'html', const Tr('HTML nima?', 'Что такое HTML?'), html1),
     _l('html2', 'html', const Tr('Sarlavha va paragraf', 'Заголовки и абзацы'), html2),
@@ -60,7 +60,7 @@ final List<Course> kCourses = [
     _l('html8', 'html', const Tr('Matnni bezash', 'Оформление текста'), html8),
     _l('html9', 'html', const Tr('Tanlash maydonlari', 'Поля выбора'), html9),
   ]),
-  Course(id: 'css', tag: '{ }', color: '#0A1226', name: const Tr('CSS', 'CSS'),
+  Course(id: 'css', tag: '{ }', color: '#1572B6', name: const Tr('CSS', 'CSS'),
       sub: const Tr('Sahifani bezash', 'Оформление страницы'), lessons: [
     _l('css1', 'css', const Tr('Birinchi qoida', 'Первое правило'), css1),
     _l('css2', 'css', const Tr('Matn', 'Текст'), css2),
@@ -72,7 +72,7 @@ final List<Course> kCourses = [
     _l('css8', 'css', const Tr(':hover va o‘tish', ':hover и переход'), css8),
     _l('css9', 'css', const Tr('O‘lchamlar', 'Размеры'), css9),
   ]),
-  Course(id: 'js', tag: 'JS', color: '#1FB6F5', name: const Tr('JavaScript', 'JavaScript'),
+  Course(id: 'js', tag: 'JS', color: '#F7DF1E', name: const Tr('JavaScript', 'JavaScript'),
       sub: const Tr('Sahifaga jon berish', 'Оживляем страницу'), lessons: [
     _l('js1', 'js', const Tr('console.log', 'console.log'), js1),
     _l('js2', 'js', const Tr('O‘zgaruvchilar', 'Переменные'), js2),
@@ -96,7 +96,7 @@ final List<Course> kCourses = [
     _l('py8', 'py', const Tr('Satrlar', 'Строки'), py8),
     _l('py9', 'py', const Tr('Lug‘atlar', 'Словари'), py9),
   ]),
-  Course(id: 'ai', tag: 'AI', color: '#E8590C', name: const Tr('Sun’iy intellekt', 'Искусственный интеллект'),
+  Course(id: 'ai', tag: 'AI', color: '#22324F', name: const Tr('Sun’iy intellekt', 'Искусственный интеллект'),
       sub: const Tr('AI ni tushunish va yaratish', 'Понять и создать AI'), lessons: [
     _l('ai1', 'ai', const Tr('AI nima?', 'Что такое AI?'), ai1, leagues: kBeginner),
     _l('ai2', 'ai', const Tr('AI qanday o‘rganadi', 'Как учится AI'), ai2, leagues: kBeginner),
@@ -116,7 +116,7 @@ final List<Course> kCourses = [
   ]),
   // Kiberxavfsizlik: asoslar hamma uchun, chuqur darslar ilg‘or va ustalar ligasi uchun.
   // Кибербезопасность: основы для всех, глубокие уроки для продвинутой и мастер-лиги.
-  Course(id: 'cy', tag: 'SEC', color: '#0B2A4A', name: const Tr('Kiberxavfsizlik', 'Кибербезопасность'),
+  Course(id: 'cy', tag: 'SEC', color: '#0E2238', name: const Tr('Kiberxavfsizlik', 'Кибербезопасность'),
       sub: const Tr('Himoyachi bo‘lib o‘ylash', 'Думать как защитник'), lessons: [
     _l('cy1', 'cy', const Tr('Kiberxavfsizlik nima?', 'Что такое кибербезопасность?'), cy1),
     _l('cy2', 'cy', const Tr('Parol va 2FA', 'Пароль и 2FA'), cy2),

@@ -100,8 +100,8 @@ class _PlayerCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: R.all(R.xl),
-        gradient: c.accentGradient,
-        boxShadow: Shadows.glow(c.accent, c, strength: 0.8),
+        color: c.ink,
+        boxShadow: Shadows.glow(c.ink, c, strength: 0.8),
       ),
       foregroundDecoration: BoxDecoration(gradient: kGloss, borderRadius: R.all(R.xl)),
       child: Stack(children: [
@@ -453,8 +453,8 @@ class _TipCard extends StatelessWidget {
       padding: const EdgeInsets.all(S.x4),
       decoration: BoxDecoration(
         borderRadius: R.all(R.xl),
-        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [c.accentSoft, c.surface]),
-        border: Border.all(color: c.hairline),
+        color: c.accentSoft,
+        border: Border.all(color: c.accent.withAlpha(0x26)),
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Floaty(
@@ -491,7 +491,10 @@ class _Continue extends StatelessWidget {
     final nx = next;
     final co = nx != null ? kAllLessons[nx.id]!.$2 : s.course;
     final goal = st.todayXp < kGoal ? st.todayXp : kGoal;
-    final white70 = kWhite.withAlpha(0xD9);
+    // Davom etish kartasi joriy kurs rangida / карточка «продолжить» в цвете текущего курса
+    final skin = courseSkin(co);
+    final fg = onColor(skin.bar);
+    final btnText = skin.bar.computeLuminance() > 0.5 ? kBlack : skin.bar;
     final lessons = s.lessonsOf(co);
     final idx = nx != null ? lessons.indexWhere((l) => l.id == nx.id) : -1;
     return Container(
@@ -499,8 +502,8 @@ class _Continue extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: R.all(R.xl),
-        gradient: c.heroGradient,
-        boxShadow: const [BoxShadow(color: Color(0x400A6CFF), blurRadius: 24, offset: Offset(0, 10))],
+        color: skin.bar,
+        boxShadow: Shadows.glow(skin.bar, c, strength: 0.9),
       ),
       child: Stack(children: [
         // suzuvchi kod belgilari / плавающие символы кода
@@ -518,7 +521,7 @@ class _Continue extends StatelessWidget {
                 amount: 8,
                 phase: i * .19,
                 period: Duration(milliseconds: 3000 + i * 500),
-                child: Text(sym, style: AppType.monoStrong.copyWith(fontSize: sz, color: kWhite.withAlpha(0x2E))),
+                child: Text(sym, style: AppType.monoStrong.copyWith(fontSize: sz, color: fg.withAlpha(0x2E))),
               ),
             ),
           ),
@@ -527,21 +530,21 @@ class _Continue extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Text('${co.tag}  ${s.tr(co.name)}'.toUpperCase(),
-              style: AppType.overline.copyWith(color: white70, letterSpacing: 1.2)),
+              style: AppType.overline.copyWith(color: fg.withAlpha(0xD9), letterSpacing: 1.2)),
           const Spacer(),
-          Text('$goal/$kGoal XP', style: AppType.footnote.copyWith(color: kWhite, fontWeight: w7)),
+          Text('$goal/$kGoal XP', style: AppType.footnote.copyWith(color: fg, fontWeight: w7)),
         ]),
         const SizedBox(height: S.x3),
         Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Expanded(
             child: Text(nx != null ? s.tr(nx.title) : s.t('all_done'),
-                maxLines: 2, overflow: TextOverflow.ellipsis, style: AppType.title1.copyWith(color: kWhite)),
+                maxLines: 2, overflow: TextOverflow.ellipsis, style: AppType.title1.copyWith(color: fg)),
           ),
           const SizedBox(width: S.x3),
-          Floaty(child: CourseTag(co, size: 52, fontSize: 16, onColorBg: true)),
+          CoursePixel(co, size: 52),
         ]),
         const SizedBox(height: S.x3),
-        AppProgress(st.todayXp / kGoal, height: 6, color: kWhite, track: const Color(0x38FFFFFF)),
+        AppProgress(st.todayXp / kGoal, height: 6, color: fg, track: fg.withAlpha(0x38)),
         const SizedBox(height: S.x5),
         SizedBox(
           width: double.infinity,
@@ -555,7 +558,7 @@ class _Continue extends StatelessWidget {
                 decoration: BoxDecoration(color: kWhite, borderRadius: R.all(R.pill)),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   Text(nx != null ? s.t('continue') : s.t('courses'),
-                      style: AppType.headline.copyWith(color: const Color(0xFF0058E6))),
+                      style: AppType.headline.copyWith(color: btnText)),
                   const SizedBox(width: 6),
                   const Icon(Icons.play_arrow_rounded, color: Color(0xFF0058E6)),
                 ]),
@@ -567,7 +570,7 @@ class _Continue extends StatelessWidget {
           const SizedBox(height: S.x3),
           Center(
             child: Text(s.tr(Tr('${idx + 1}-dars · ${lessons.length} tadan', 'Урок ${idx + 1} из ${lessons.length}')),
-                style: AppType.caption.copyWith(color: white70)),
+                style: AppType.caption.copyWith(color: fg.withAlpha(0xD9))),
           ),
         ],
       ]),
@@ -688,13 +691,13 @@ class _CourseTile extends StatelessWidget {
       },
       child: CourseGlass(
         course: co,
-        height: 172,
+        height: 200,
         child: Padding(
           padding: const EdgeInsets.all(S.x4),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               // piksel-art belgi (qimirlamaydi — chetlari o‘tkir qoladi) / пиксель-арт значок (неподвижен — края чёткие)
-              CoursePixel(co, size: 48),
+              CoursePixel(co, size: 40),
               const Spacer(),
               if (badge != null) badge,
             ]),

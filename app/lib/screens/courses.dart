@@ -65,8 +65,8 @@ class LockedCourseCard extends StatelessWidget {
       padding: const EdgeInsets.all(S.x5),
       decoration: BoxDecoration(
         borderRadius: R.all(R.xl),
-        gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF1E4D7B), Color(0xFF07101F)]),
-        boxShadow: Shadows.glow(const Color(0xFF1E4D7B), c, strength: 0.8),
+        color: const Color(0xFF0E2238), // kiberxavfsizlik terminali / терминал кибербезопасности
+        boxShadow: Shadows.glow(const Color(0xFF0E2238), c, strength: 0.8),
       ),
       foregroundDecoration: BoxDecoration(gradient: kGloss, borderRadius: R.all(R.xl)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -197,6 +197,7 @@ class _Path extends StatelessWidget {
     final s = AppScope.of(context);
     final c = s.c, st = s.st;
     final cur = s.nextLesson(course);
+    final tint = courseAccent(course, c);
     const offsets = [0.0, 56.0, 112.0, 56.0];
     final items = <Widget>[];
     for (var i = 0; i < s.lessonsOf(course).length; i++) {
@@ -218,7 +219,7 @@ class _Path extends StatelessWidget {
           onTap: open ? () => openLesson(context, l.id) : null,
           scale: 0.97,
           child: Row(children: [
-            _Node(index: i, done: done, current: isCur, open: open),
+            _Node(index: i, done: done, current: isCur, open: open, tint: tint),
             const SizedBox(width: S.x4),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -246,7 +247,7 @@ class _Path extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(vertical: 2.5),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: done ? c.accent.withAlpha(0x99) : c.hairlineStrong,
+                  color: done ? tint.withAlpha(0x99) : c.hairlineStrong,
                 ),
               ),
           ]),
@@ -261,7 +262,8 @@ class _Path extends StatelessWidget {
 class _Node extends StatelessWidget {
   final int index;
   final bool done, current, open;
-  const _Node({required this.index, required this.done, required this.current, required this.open});
+  final Color tint; // kurs rangi / цвет курса
+  const _Node({required this.index, required this.done, required this.current, required this.open, required this.tint});
 
   @override
   Widget build(BuildContext context) {
@@ -291,9 +293,10 @@ class _Node extends StatelessWidget {
 
     if (done) {
       return face(
-        gradient: c.accentGradient,
-        lip: Color.lerp(c.accent, kBlack, 0.35),
-        child: const Icon(Icons.check_rounded, size: 32, color: kWhite),
+        gradient: null,
+        color: tint,
+        lip: Color.lerp(tint, kBlack, 0.35),
+        child: Icon(Icons.check_rounded, size: 32, color: onColor(tint)),
       );
     }
     if (current) {
@@ -301,13 +304,16 @@ class _Node extends StatelessWidget {
         builder: (t) => Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            boxShadow: [BoxShadow(color: c.yellow.withAlpha((0x40 + 0x50 * t).round()), blurRadius: 18 + 14 * t)],
+            // aniq halqa "nafas oladi" (xira nur emas) / чёткое кольцо «дышит» (не размытое свечение)
+            border: Border.all(color: tint.withAlpha((0x33 + 0x66 * t).round()), width: 3 + 3 * t),
           ),
+          padding: const EdgeInsets.all(4),
           child: face(
-            gradient: c.yellowGradient,
-            lip: Color.lerp(c.yellow, kBlack, 0.3),
+            gradient: null,
+            color: tint,
+            lip: Color.lerp(tint, kBlack, 0.3),
             ring: true,
-            child: const Icon(Icons.play_arrow_rounded, size: 36, color: kWhite, shadows: kTextShadow),
+            child: Icon(Icons.play_arrow_rounded, size: 36, color: onColor(tint)),
           ),
         ),
       );

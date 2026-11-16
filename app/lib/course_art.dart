@@ -13,30 +13,44 @@ import 'theme.dart';
 import 'widgets.dart';
 
 // ---------------------------------------------------------------- ranglar / цвета
-/// Kurs urg‘u ranglari: [asosiy, ikkinchi]. Progress chizig‘i va shisha ortidagi yumshoq sharlar.
-/// Акцентные цвета курса: [основной, второй]. Полоса прогресса и мягкие сферы за стеклом.
-/// Binafsha/indigo yo‘q — faqat Idrok ko‘klari va har kursning o‘z rangi.
-/// Без фиолетового/индиго — только синие Idrok и собственный цвет курса.
-const Map<String, List<Color>> kCourseTint = {
-  'pc': [Color(0xFF13B07B), Color(0xFF7EE0B5)],
-  'html': [Color(0xFF0A6CFF), Color(0xFF38C8FF)],
-  'css': [Color(0xFF00A89D), Color(0xFF38C8FF)],
-  'js': [Color(0xFF0A9BE0), Color(0xFFFFC94A)],
-  'py': [Color(0xFF3776AB), Color(0xFFFFD43B)],
-  'ai': [Color(0xFFF2643D), Color(0xFFFFC94A)],
-  'cy': [Color(0xFF1F5FA8), Color(0xFF38C8FF)],
+/// Kurs "terisi": har kurs o‘z dasturlash tilining haqiqiy rangida, kod oynasi ko‘rinishida.
+/// «Скин» курса: каждый курс в настоящем цвете своего языка, в виде окна редактора кода.
+class CourseSkin {
+  final Color bar; // sarlavha qatori / строка заголовка
+  final Color barText; // sarlavha matni / текст заголовка
+  final Color accent; // progress va urg‘u / прогресс и акцент
+  final String file; // oynadagi fayl nomi / имя файла в окне
+  const CourseSkin({required this.bar, required this.barText, required this.accent, required this.file});
+}
+
+const Map<String, CourseSkin> kCourseSkin = {
+  'pc': CourseSkin(bar: Color(0xFF2D9C5A), barText: kWhite, accent: Color(0xFF2D9C5A), file: 'kompyuter.txt'),
+  'html': CourseSkin(bar: Color(0xFFE34F26), barText: kWhite, accent: Color(0xFFE34F26), file: 'index.html'),
+  'css': CourseSkin(bar: Color(0xFF1572B6), barText: kWhite, accent: Color(0xFF1572B6), file: 'style.css'),
+  'js': CourseSkin(bar: Color(0xFFF7DF1E), barText: Color(0xFF1A1A1A), accent: Color(0xFFD4B400), file: 'app.js'),
+  'py': CourseSkin(bar: Color(0xFF3776AB), barText: kWhite, accent: Color(0xFF3776AB), file: 'main.py'),
+  'ai': CourseSkin(bar: Color(0xFF22324F), barText: Color(0xFF8FDBFF), accent: Color(0xFF2FA4E0), file: 'model.py'),
+  'cy': CourseSkin(bar: Color(0xFF0E2238), barText: Color(0xFF3DDC84), accent: Color(0xFF2FBF71), file: 'secure.sh'),
 };
 
+CourseSkin courseSkin(Course co) {
+  final s = kCourseSkin[co.id];
+  if (s != null) return s;
+  final col = hexColor(co.color);
+  return CourseSkin(bar: col, barText: onColor(col), accent: col, file: '${co.id}.txt');
+}
+
+/// Eski API (testlar uchun): [asosiy, sarlavha] / старый API (для тестов): [акцент, заголовок].
+final Map<String, List<Color>> kCourseTint = {for (final e in kCourseSkin.entries) e.key: [e.value.accent, e.value.bar]};
+
 List<Color> courseTint(Course co, AppColors c) {
-  final t = kCourseTint[co.id];
-  if (t != null) return t;
-  final col = courseColor(co, c);
-  return [col, Color.lerp(col, kSky, 0.5)!];
+  final k = courseSkin(co);
+  return [k.accent, k.bar];
 }
 
 /// Kursning urg‘u rangi (progress chizig‘i) / акцентный цвет курса (полоса прогресса).
 Color courseAccent(Course co, AppColors c) {
-  final a = courseTint(co, c).first;
+  final a = courseSkin(co).accent;
   return c.isDark ? Color.lerp(a, kWhite, 0.25)! : a;
 }
 
@@ -255,11 +269,11 @@ class _PixelPainter extends CustomPainter {
   bool shouldRepaint(_PixelPainter old) => old.rows != rows || old.dark != dark;
 }
 
-// ---------------------------------------------------------------- shisha karta / стеклянная карточка
-/// Kurs kartasi uchun shisha sirt: ortida kurs rangidagi yumshoq sharlar, ustida yarim shaffof qatlam.
-/// Xiralashtirish (blur) ishlatilmaydi — arzon telefonlarda ham tez ishlaydi.
-/// Стеклянная поверхность карточки курса: мягкие сферы цвета курса, сверху полупрозрачный слой.
-/// Размытие (blur) не используется — быстро работает и на слабых телефонах.
+// ---------------------------------------------------------------- kod oynasi kartasi / карточка «окно кода»
+/// Kurs kartasi — kichik kod muharriri oynasi: rangli sarlavha qatori (3 nuqta + fayl nomi), oq tana.
+/// Gradient va xira dog‘lar yo‘q. Карточка курса — маленькое окно редактора: цветная строка заголовка
+/// (3 точки + имя файла), светлое тело. Без градиентов и размытых пятен.
+/// (Nomi eski — CourseGlass — chaqiruvchilar o‘zgarmasin deb / имя старое, чтобы не менять вызовы.)
 class CourseGlass extends StatelessWidget {
   final Course course;
   final Widget child;
@@ -270,96 +284,54 @@ class CourseGlass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = colorsOf(context);
-    final t = courseTint(course, c);
-    final d = Motion.of(context, Motion.slow);
-    // Kurs almashganda ranglar silliq o‘tadi / при смене курса цвета меняются плавно.
-    return TweenAnimationBuilder<Color?>(
-      tween: ColorTween(end: t[0]),
+    final k = courseSkin(course);
+    final d = Motion.of(context, Motion.base);
+    final r = BorderRadius.circular(radius);
+    final bar = AnimatedContainer(
       duration: d,
       curve: Motion.curve,
-      builder: (_, a, __) => TweenAnimationBuilder<Color?>(
-        tween: ColorTween(end: t[1]),
-        duration: d,
-        curve: Motion.curve,
-        child: child,
-        builder: (_, b, ch) => _surface(c, a ?? t[0], b ?? t[1], ch!),
-      ),
+      height: 30,
+      color: k.bar,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(children: [
+        for (var i = 0; i < 3; i++) ...[
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(shape: BoxShape.circle, color: k.barText.withAlpha(i == 0 ? 0xE6 : 0x73)),
+          ),
+          const SizedBox(width: 5),
+        ],
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(k.file,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppType.mono.copyWith(fontSize: 12, height: 1, color: k.barText, fontWeight: w7)),
+        ),
+      ]),
     );
-  }
-
-  Widget _surface(AppColors c, Color a, Color b, Widget ch) {
-    final r = BorderRadius.circular(radius);
-    return Container(
+    return AnimatedContainer(
+      duration: d,
+      curve: Motion.curve,
       height: height,
       decoration: BoxDecoration(
+        color: c.surface,
         borderRadius: r,
+        border: Border.all(color: k.bar.withAlpha(c.isDark ? 0x99 : 0x66), width: 1.5),
         boxShadow: [
-          BoxShadow(
-              color: a.withAlpha(c.isDark ? 0x40 : 0x30), blurRadius: 26, offset: const Offset(0, 12), spreadRadius: -10),
-          ...Shadows.soft(c),
+          // qalin rangli pastki chet (o‘yin kartasi kabi) / толстый цветной нижний край (как игровая карточка)
+          BoxShadow(color: Color.lerp(k.bar, const Color(0xFF000000), 0.25)!.withAlpha(c.isDark ? 0xCC : 0x8C), offset: const Offset(0, 4)),
         ],
       ),
       child: ClipRRect(
-        borderRadius: r,
-        child: Stack(children: [
-          // 1) pastel fon / пастельный фон
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: c.surface,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color.alphaBlend(a.withAlpha(c.isDark ? 0x30 : 0x26), c.surface),
-                    Color.alphaBlend(b.withAlpha(c.isDark ? 0x1C : 0x1A), c.surface),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // 2) yumshoq sharlar / мягкие сферы
-          Positioned(right: -46, top: -56, child: _Blob(170, a.withAlpha(c.isDark ? 0x66 : 0x59))),
-          Positioned(left: -60, bottom: -70, child: _Blob(180, b.withAlpha(c.isDark ? 0x4D : 0x4D))),
-          // 3) shisha qatlami + och chegara / слой стекла + светлая кромка
-          Positioned.fill(
-            child: IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: r,
-                  border: Border.all(color: c.isDark ? c.glassEdge : kWhite, width: 1.2),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: c.isDark
-                        ? const [Color(0x1AFFFFFF), Color(0x05FFFFFF)]
-                        : const [Color(0x99FFFFFF), Color(0x47FFFFFF)],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          ch,
-        ]),
+        borderRadius: BorderRadius.circular(radius - 1.5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: height == null ? MainAxisSize.min : MainAxisSize.max,
+          children: [bar, if (height == null) child else Expanded(child: child)],
+        ),
       ),
     );
   }
-}
-
-class _Blob extends StatelessWidget {
-  final double size;
-  final Color color;
-  const _Blob(this.size, this.color);
-
-  @override
-  Widget build(BuildContext context) => IgnorePointer(
-        child: Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(colors: [color, color.withAlpha(0)]),
-          ),
-        ),
-      );
 }

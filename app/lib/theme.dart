@@ -83,21 +83,16 @@ class AppColors {
     required this.scrim,
   });
 
-  /// Asosiy tugma gradienti / градиент основной кнопки.
-  LinearGradient get accentGradient =>
-      LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [accentHi, accent]);
+  /// Asosiy rang (tekis — yumshoq gradientlar yo‘q) / основной цвет (плоский — без мягких градиентов).
+  LinearGradient get accentGradient => LinearGradient(colors: [accent, accent]);
 
-  LinearGradient get yellowGradient =>
-      LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [yellowHi, yellow]);
+  LinearGradient get yellowGradient => LinearGradient(colors: [yellow, yellow]);
 
-  /// Qahramon kartasi (yorqin to‘q sariq) / карточка-герой.
-  LinearGradient get heroGradient => LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: isDark
-            ? const [Color(0xFF2FA8FF), Color(0xFF0047D6)]
-            : const [Color(0xFF2EA6FF), Color(0xFF0058F0)],
-      );
+  /// "Siyoh" — kod muharririga o‘xshash to‘q ko‘k panel / «чернила» — тёмно-синяя панель как редактор кода.
+  Color get ink => isDark ? const Color(0xFF131C30) : const Color(0xFF0F1B33);
+
+  /// Qahramon kartasi: tekis siyoh rang / карточка-герой: плоские «чернила».
+  LinearGradient get heroGradient => LinearGradient(colors: [ink, ink]);
 }
 
 /// Yorug‘ mavzu: iliq oq, yumshoq soyalar, nozik chegaralar.
@@ -223,14 +218,13 @@ class Shadows {
       ? const [BoxShadow(color: Color(0x4D000000), blurRadius: 16, offset: Offset(0, 6), spreadRadius: -6)]
       : const [BoxShadow(color: Color(0x160A1226), blurRadius: 16, offset: Offset(0, 6), spreadRadius: -6)];
 
-  /// Nur sochuvchi tugma / «светящаяся» кнопка. strength: 0..1
+  /// Tugmaning "qalin cheti" (xira nur o‘rniga): bosilganda pastga tushadi.
+  /// «Толстый край» кнопки (вместо размытого свечения): при нажатии опускается. strength: 0..1
   static List<BoxShadow> glow(Color color, AppColors c, {double strength = 1}) {
-    final a = ((c.isDark ? 0x80 : 0x5C) * strength).round().clamp(0, 255).toInt();
-    return [
-      BoxShadow(color: color.withAlpha(a), blurRadius: 26, offset: const Offset(0, 10), spreadRadius: -8),
-      BoxShadow(color: color.withAlpha((a * 0.5).round()), blurRadius: 8, offset: const Offset(0, 2), spreadRadius: -2),
-    ];
+    final edge = Color.lerp(color, const Color(0xFF000000), c.isDark ? 0.45 : 0.3)!;
+    return [BoxShadow(color: edge, offset: Offset(0, (4 * strength).clamp(0.0, 4.0).toDouble()), blurRadius: 0)];
   }
+
 }
 
 // ---------------------------------------------------------------- harakat / движение
@@ -261,7 +255,7 @@ Color hexColor(String hex) {
 
 /// Rangli fon ustidagi matn: oq (juda och fonda — qora).
 /// Текст на цветном фоне: белый (на очень светлом — чёрный).
-Color onColor(Color bg) => bg.computeLuminance() > 0.75 ? kBlack : kWhite;
+Color onColor(Color bg) => bg.computeLuminance() > 0.5 ? kBlack : kWhite;
 
 /// Oq yozuvga yengil soya — sariq/to‘q sariq ustida o‘qilishi uchun.
 const List<Shadow> kTextShadow = [Shadow(color: Color(0x4D000000), blurRadius: 4, offset: Offset(0, 1))];
